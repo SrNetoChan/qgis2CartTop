@@ -1,9 +1,14 @@
 [general]
-name=Minimal
-description=Minimal plugin
-about=About this minimal plugin
-version=1.0
+name=qgis2carttop
+description=QGIS plugin for easy export data into a CartTopV1 data base.
+about=QGIS Plugin to help exporting data into a PostgreSQL/PostGIS database
+      following the sata model defined by "Normas e Especificações Técnicas
+      para a Cartografia Vectoria e de Imagem" (CartTop / ReCart) from
+      Direcção-Geral do Território (Portugal).
+version=0.1
 qgisMinimumVersion=3.0
-author=Martin Dobias
-email=wonder.sk@gmail.com
-repository=URL to the code repository
+author=Alexandre Neto
+email=senhor.neto@gmail.com
+repository=https://github.com/SrNetoChan/qgis2CartTop
+experimental=True
+tags=carttop, PostgreSQL, PostGIS, ReCart
