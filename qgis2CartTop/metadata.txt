@@ -11,4 +11,5 @@ author=Alexandre Neto
 email=senhor.neto@gmail.com
 repository=https://github.com/SrNetoChan/qgis2CartTop
 experimental=True
-tags=carttop, PostgreSQL, PostGIS, ReCart
+hasProcessingProvider=yes
+tags=carttop, PostgreSQL, PostGIS, ReCart, Processing

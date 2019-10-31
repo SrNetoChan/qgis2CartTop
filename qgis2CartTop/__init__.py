@@ -13,6 +13,8 @@
 #---------------------------------------------------------------------
 
 from PyQt5.QtWidgets import QAction, QMessageBox
+from qgis.core import QgsApplication
+from .processing_provider.provider import Provider
 
 def classFactory(iface):
     return qgis2CartTop(iface)
@@ -22,14 +24,12 @@ class qgis2CartTop:
     def __init__(self, iface):
         self.iface = iface
 
+    def initProcessing(self):
+        self.provider = Provider()
+        QgsApplication.processingRegistry().addProvider(self.provider)
+
     def initGui(self):
-        self.action = QAction('Go!', self.iface.mainWindow())
-        self.action.triggered.connect(self.run)
-        self.iface.addToolBarIcon(self.action)
+        self.initProcessing()
 
     def unload(self):
-        self.iface.removeToolBarIcon(self.action)
-        del self.action
-
-    def run(self):
-        QMessageBox.information(None, 'Minimal plugin', 'Do something useful here')
+        QgsApplication.processingRegistry().removeProvider(self.provider)
