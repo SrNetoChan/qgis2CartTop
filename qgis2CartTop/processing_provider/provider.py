@@ -1,12 +1,14 @@
 from qgis.core import QgsProcessingProvider
 
 from .example_processing_algorithm import ExampleProcessingAlgorithm
+from .exportar_curvas_de_nivel import Exportar_curvas_de_nivel
 
 
 class Provider(QgsProcessingProvider):
 
     def loadAlgorithms(self, *args, **kwargs):
         self.addAlgorithm(ExampleProcessingAlgorithm())
+        self.addAlgorithm(Exportar_curvas_de_nivel())
         # add additional algorithms here
         # self.addAlgorithm(MyOtherAlgorithm())
 
