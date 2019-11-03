@@ -1,16 +1,40 @@
-from qgis.core import QgsProcessing
-from qgis.core import QgsProcessingAlgorithm
-from qgis.core import QgsProcessingMultiStepFeedback
-from qgis.core import QgsProcessingParameterFeatureSource
+from qgis.PyQt.QtCore import QCoreApplication
+from qgis.core import (QgsProcessing,
+                       QgsProcessingAlgorithm,
+                       QgsProcessingMultiStepFeedback,
+                       QgsProcessingParameterFeatureSource)
 import processing
 
 
 class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
 
+    # Constants used to refer to parameters and outputs. They will be
+    # used when calling the algorithm from another algorithm, or when
+    # calling from the QGIS console.
+
+    INPUT = 'INPUT'
+
     def initAlgorithm(self, config=None):
-        self.addParameter(QgsProcessingParameterFeatureSource('input', 'input', types=[QgsProcessing.TypeVectorLine], defaultValue=None))
+        self.addParameter(
+            QgsProcessingParameterFeatureSource(
+                self.INPUT,
+                self.tr('Input line layer (3D)'),
+                types=[QgsProcessing.TypeVectorLine],
+                defaultValue=None
+            )
+        )
 
     def processAlgorithm(self, parameters, context, model_feedback):
+        # Retrieve the feature source and confirm that it's valid
+        source = self.parameterAsSource(
+            parameters,
+            self.INPUT,
+            context
+        )
+
+        if source is None:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
+
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
         # overall progress through the model
         feedback = QgsProcessingMultiStepFeedback(2, model_feedback)
@@ -19,7 +43,19 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
 
         # Refactor fields
         alg_params = {
-            'FIELDS_MAPPING': [{'expression': 'now()', 'length': -1, 'name': 'inicio_objeto', 'precision': -1, 'type': 14}, {'expression': "'1'", 'length': 255, 'name': 'valor_tipo_limite', 'precision': -1, 'type': 10}],
+            'FIELDS_MAPPING': [{
+                'expression': 'now()',
+                'length': -1,
+                'name': 'inicio_objeto',
+                'precision': -1,
+                'type': 14
+            },{
+                'expression': "'1'",
+                'length': 255,
+                'name': 'valor_tipo_limite',
+                'precision': -1,
+                'type': 10
+            }],
             'INPUT': parameters['input'],
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
         }
@@ -67,7 +103,7 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
         return 'exportar_curvas_de_nivel'
 
     def displayName(self):
-        return 'exportar_curvas_de_nivel'
+        return 'Exportar curvas de nível'
 
     def group(self):
         return '03 - Altimetria'
@@ -77,3 +113,15 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
 
     def createInstance(self):
         return Exportar_curvas_de_nivel()
+
+    def tr(self, string):
+        """
+        Returns a translatable string with the self.tr() function.
+        """
+        return QCoreApplication.translate('Processing', string)
+
+    def shortHelpString(self):
+        return self.tr("Exporta elementos do tipo curva de nível para a base " \
+                       "de dados RECART usando uma ligação PostgreSQL/PostGIS " \
+                       "já configurada.\n\n" \
+                       "A camada vectorial de input deve ser do tipo linha 3D.")
