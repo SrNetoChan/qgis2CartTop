@@ -2,7 +2,8 @@ from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (QgsProcessing,
                        QgsProcessingAlgorithm,
                        QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterFeatureSource)
+                       QgsProcessingParameterFeatureSource,
+                       QgsProcessingParameterEnum)
 import processing
 
 
@@ -13,6 +14,7 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
     # calling from the QGIS console.
 
     INPUT = 'INPUT'
+    VALOR_TIPO_CURVA = 'VALOR_TIPO_CURVA'
 
     def initAlgorithm(self, config=None):
         self.addParameter(
@@ -24,22 +26,33 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
             )
         )
 
-    def processAlgorithm(self, parameters, context, model_feedback):
-        # Retrieve the feature source and confirm that it's valid
-        source = self.parameterAsSource(
-            parameters,
-            self.INPUT,
-            context
+        self.valor_tipo_curva_dict = {
+            'Mestra':'1',
+            'Secundária':'2',
+            'Auxiliar':'3'
+        }
+
+        self.addParameter(
+            QgsProcessingParameterEnum(
+                self.VALOR_TIPO_CURVA,
+                self.tr('Valor tipo curva'),
+                list(self.valor_tipo_curva_dict.keys())
+            )
         )
 
-        if source is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
-
+    def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
         # overall progress through the model
         feedback = QgsProcessingMultiStepFeedback(2, model_feedback)
         results = {}
         outputs = {}
+
+        # Convert enumerator to zero based index value
+        valor_tipo_curva = self.parameterAsEnum(
+            parameters,
+            self.VALOR_TIPO_CURVA,
+            context
+            ) + 1
 
         # Refactor fields
         alg_params = {
@@ -50,13 +63,13 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
                 'precision': -1,
                 'type': 14
             },{
-                'expression': "'1'",
+                'expression': str(valor_tipo_curva),
                 'length': 255,
-                'name': 'valor_tipo_limite',
+                'name': 'valor_tipo_curva',
                 'precision': -1,
                 'type': 10
             }],
-            'INPUT': parameters['input'],
+            'INPUT': parameters['INPUT'],
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
         }
         outputs['RefactorFields'] = processing.run('qgis:refactorfields', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
