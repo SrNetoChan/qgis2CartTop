@@ -3,7 +3,8 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingAlgorithm,
                        QgsProcessingMultiStepFeedback,
                        QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterEnum)
+                       QgsProcessingParameterEnum,
+                       QgsProperty)
 import processing
 from .utils import get_postgres_connections
 
@@ -57,7 +58,7 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
         # overall progress through the model
-        feedback = QgsProcessingMultiStepFeedback(2, model_feedback)
+        feedback = QgsProcessingMultiStepFeedback(4, model_feedback)
         results = {}
         outputs = {}
 
@@ -92,6 +93,32 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
         if feedback.isCanceled():
             return {}
 
+        # Correct possible wrong Z values along lines
+        # Extract Z values
+        alg_params = {
+            'COLUMN_PREFIX': 'z_',
+            'INPUT': outputs['RefactorFields']['OUTPUT'],
+            'SUMMARIES': [11],
+            'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
+        }
+        outputs['ExtractZValues'] = processing.run('native:extractzvalues', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+
+        feedback.setCurrentStep(2)
+        if feedback.isCanceled():
+            return {}
+
+        # Set Z value
+        alg_params = {
+            'INPUT': outputs['ExtractZValues']['OUTPUT'],
+            'Z_VALUE': QgsProperty.fromExpression('"z_majority"'),
+            'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
+        }
+        outputs['SetZValue'] = processing.run('qgis:setzvalue', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+
+        feedback.setCurrentStep(3)
+        if feedback.isCanceled():
+            return {}
+
         # Export to PostgreSQL (available connections)
         idx = self.parameterAsEnum(
             parameters,
@@ -112,7 +139,7 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
             'GT': '',
             'GTYPE': 4,
             'INDEX': True,
-            'INPUT': outputs['RefactorFields']['OUTPUT'],
+            'INPUT': outputs['SetZValue']['OUTPUT'],
             'LAUNDER': True,
             'OPTIONS': '',
             'OVERWRITE': False,
