@@ -5,6 +5,7 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterEnum)
 import processing
+from .utils import get_postgres_connections
 
 
 class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
@@ -15,8 +16,20 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
 
     INPUT = 'INPUT'
     VALOR_TIPO_CURVA = 'VALOR_TIPO_CURVA'
+    POSTGRES_CONNECTION = 'POSTGRES_CONNECTION'
 
     def initAlgorithm(self, config=None):
+        self.postgres_connections_list = get_postgres_connections()
+
+        self.addParameter(
+            QgsProcessingParameterEnum(
+                self.POSTGRES_CONNECTION,
+                self.tr('Ligação PostgreSQL'),
+                self.postgres_connections_list,
+                defaultValue = 0
+            )
+        )
+
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.INPUT,
@@ -36,7 +49,8 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
             QgsProcessingParameterEnum(
                 self.VALOR_TIPO_CURVA,
                 self.tr('Valor tipo curva'),
-                list(self.valor_tipo_curva_dict.keys())
+                list(self.valor_tipo_curva_dict.keys()),
+                defaultValue = 1
             )
         )
 
@@ -79,12 +93,20 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
             return {}
 
         # Export to PostgreSQL (available connections)
+        idx = self.parameterAsEnum(
+            parameters,
+            self.POSTGRES_CONNECTION,
+            context
+            )
+
+        postgres_connection = self.postgres_connections_list[idx]
+
         alg_params = {
             'ADDFIELDS': True,
             'APPEND': True,
             'A_SRS': None,
             'CLIP': False,
-            'DATABASE': 'postgresql - localhost',
+            'DATABASE': postgres_connection,
             'DIM': 1,
             'GEOCOLUMN': 'geometria',
             'GT': '',
