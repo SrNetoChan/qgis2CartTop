@@ -2,6 +2,8 @@ from qgis.core import QgsProcessingProvider
 
 from .example_processing_algorithm import ExampleProcessingAlgorithm
 from .exportar_curvas_de_nivel import Exportar_curvas_de_nivel
+from .exportar_pontos_cotados import Exportar_pontos_cotados
+from .exportar_linhas_de_quebra import Exportar_linhas_de_quebra
 
 
 class Provider(QgsProcessingProvider):
@@ -9,6 +11,8 @@ class Provider(QgsProcessingProvider):
     def loadAlgorithms(self, *args, **kwargs):
         self.addAlgorithm(ExampleProcessingAlgorithm())
         self.addAlgorithm(Exportar_curvas_de_nivel())
+        self.addAlgorithm(Exportar_pontos_cotados())
+        self.addAlgorithm(Exportar_linhas_de_quebra())
         # add additional algorithms here
         # self.addAlgorithm(MyOtherAlgorithm())
 

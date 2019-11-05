@@ -10,15 +10,14 @@ import processing
 from .utils import get_postgres_connections
 
 
-class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
+class Exportar_pontos_cotados(QgsProcessingAlgorithm):
 
     # Constants used to refer to parameters and outputs. They will be
     # used when calling the algorithm from another algorithm, or when
     # calling from the QGIS console.
 
     INPUT = 'INPUT'
-    HOMOGENIZE_Z_VALUES = 'HOMOGENIZE_Z_VALUES'
-    VALOR_TIPO_CURVA = 'VALOR_TIPO_CURVA'
+    VALOR_CLASSIFICA_LAS = 'VALOR_CLASSIFICA_LAS'
     POSTGRES_CONNECTION = 'POSTGRES_CONNECTION'
 
 
@@ -37,50 +36,33 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.INPUT,
-                self.tr('Input line layer (3D)'),
-                types=[QgsProcessing.TypeVectorLine],
+                self.tr('Input point layer (3D)'),
+                types=[QgsProcessing.TypeVectorPoint],
                 defaultValue=None
             )
         )
 
         self.addParameter(
-            QgsProcessingParameterBoolean(
-                self.HOMOGENIZE_Z_VALUES,
-                'Homogenize Z values'
-            )
-        )
-
-        self.valor_tipo_curva_dict = {
-            'Mestra':'1',
-            'Secundária':'2',
-            'Auxiliar':'3'
-        }
-
-        self.addParameter(
             QgsProcessingParameterEnum(
-                self.VALOR_TIPO_CURVA,
-                self.tr('Valor tipo curva'),
-                list(self.valor_tipo_curva_dict.keys()),
-                defaultValue = 1
+                self.VALOR_CLASSIFICA_LAS,
+                self.tr('valorClassificaLAS'),
+                ['Terreno', 'Edifício', 'Edifício - soleira', 'Edifício - beirado', 'Edifício - ponto mais alto'],
+                defaultValue=0,
+                optional=False,
             )
         )
 
     def processAlgorithm(self, parameters, context, model_feedback):
-        # Check if homogenize
-
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
         # overall progress through the model
-        if parameters[self.HOMOGENIZE_Z_VALUES]:
-            feedback = QgsProcessingMultiStepFeedback(4, model_feedback)
-        else:
-            feedback = QgsProcessingMultiStepFeedback(2, model_feedback)
+        feedback = QgsProcessingMultiStepFeedback(2, model_feedback)
         results = {}
         outputs = {}
 
         # Convert enumerator to zero based index value
-        valor_tipo_curva = self.parameterAsEnum(
+        valor_classifica_las = self.parameterAsEnum(
             parameters,
-            self.VALOR_TIPO_CURVA,
+            self.VALOR_CLASSIFICA_LAS,
             context
             ) + 1
 
@@ -93,9 +75,9 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
                 'precision': -1,
                 'type': 14
             },{
-                'expression': str(valor_tipo_curva),
+                'expression': str(valor_classifica_las),
                 'length': 255,
-                'name': 'valor_tipo_curva',
+                'name': 'valor_classifica_las',
                 'precision': -1,
                 'type': 10
             }],
@@ -107,36 +89,6 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
         feedback.setCurrentStep(1)
         if feedback.isCanceled():
             return {}
-
-        if parameters[self.HOMOGENIZE_Z_VALUES]:
-            # If Homogenize Z Values option is checked
-            # Correct possible wrong Z values along lines
-            # Extract Z values
-            alg_params = {
-                'COLUMN_PREFIX': 'z_',
-                'INPUT': outputs['RefactorFields']['OUTPUT'],
-                'SUMMARIES': [11],
-                'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
-            }
-            outputs['ExtractZValues'] = processing.run('native:extractzvalues', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
-
-            feedback.setCurrentStep(2)
-            if feedback.isCanceled():
-                return {}
-
-            # Set Z value
-            alg_params = {
-                'INPUT': outputs['ExtractZValues']['OUTPUT'],
-                'Z_VALUE': QgsProperty.fromExpression('"z_majority"'),
-                'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
-            }
-            outputs['SetZValue'] = processing.run('qgis:setzvalue', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
-
-            feedback.setCurrentStep(3)
-            if feedback.isCanceled():
-                return {}
-        else:
-            outputs['SetZValue'] = outputs['RefactorFields']
 
         # Export to PostgreSQL (available connections)
         idx = self.parameterAsEnum(
@@ -158,7 +110,7 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
             'GT': '',
             'GTYPE': 4,
             'INDEX': True,
-            'INPUT': outputs['SetZValue']['OUTPUT'],
+            'INPUT': outputs['RefactorFields']['OUTPUT'],
             'LAUNDER': True,
             'OPTIONS': '',
             'OVERWRITE': False,
@@ -173,7 +125,7 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
             'SKIPFAILURES': False,
             'SPAT': None,
             'S_SRS': None,
-            'TABLE': 'curva_de_nivel',
+            'TABLE': 'ponto_cotado',
             'T_SRS': None,
             'WHERE': ''
         }
@@ -181,10 +133,10 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
         return results
 
     def name(self):
-        return 'exportar_curvas_de_nivel'
+        return 'exportar_postos_cotados'
 
     def displayName(self):
-        return '01. Exportar curvas de nível'
+        return '03. Exportar pontos cotados'
 
     def group(self):
         return '03 - Altimetria'
@@ -193,7 +145,7 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
         return '03altimetria'
 
     def createInstance(self):
-        return Exportar_curvas_de_nivel()
+        return Exportar_pontos_cotados()
 
     def tr(self, string):
         """
@@ -202,9 +154,8 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
         return QCoreApplication.translate('Processing', string)
 
     def shortHelpString(self):
-        return self.tr("Exporta elementos do tipo curva de nível para a base " \
+        return self.tr("Exporta elementos do tipo ponto cotado para a base " \
                        "de dados RECART usando uma ligação PostgreSQL/PostGIS " \
                        "já configurada.\n\n" \
-                       "A camada vectorial de input deve ser do tipo linha 3D.\n\n" \
-                       "A opção Homogenize Z Values permite corrigir vertices "
-                       "com valores anómalos em Z comparados com os restantes.")
+                       "A camada vectorial de input deve ser do tipo ponto 3D."
+        )
