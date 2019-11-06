@@ -4,6 +4,8 @@ from .example_processing_algorithm import ExampleProcessingAlgorithm
 from .exportar_curvas_de_nivel import Exportar_curvas_de_nivel
 from .exportar_pontos_cotados import Exportar_pontos_cotados
 from .exportar_linhas_de_quebra import Exportar_linhas_de_quebra
+from .exportar_elemento_associado_de_agua import Exportar_elemento_associado_de_agua
+from .exportar_elemento_associado_de_eletricidade import Exportar_elemento_associado_de_eletricidade
 
 
 class Provider(QgsProcessingProvider):
@@ -13,6 +15,8 @@ class Provider(QgsProcessingProvider):
         self.addAlgorithm(Exportar_curvas_de_nivel())
         self.addAlgorithm(Exportar_pontos_cotados())
         self.addAlgorithm(Exportar_linhas_de_quebra())
+        self.addAlgorithm(Exportar_elemento_associado_de_agua())
+        self.addAlgorithm(Exportar_elemento_associado_de_eletricidade())
         # add additional algorithms here
         # self.addAlgorithm(MyOtherAlgorithm())
 
