@@ -6,6 +6,8 @@ from .exportar_pontos_cotados import Exportar_pontos_cotados
 from .exportar_linhas_de_quebra import Exportar_linhas_de_quebra
 from .exportar_elemento_associado_de_agua import Exportar_elemento_associado_de_agua
 from .exportar_elemento_associado_de_eletricidade import Exportar_elemento_associado_de_eletricidade
+from .exportar_cabo_eletrico import Exportar_cabo_eletrico
+
 
 
 class Provider(QgsProcessingProvider):
@@ -17,6 +19,7 @@ class Provider(QgsProcessingProvider):
         self.addAlgorithm(Exportar_linhas_de_quebra())
         self.addAlgorithm(Exportar_elemento_associado_de_agua())
         self.addAlgorithm(Exportar_elemento_associado_de_eletricidade())
+        self.addAlgorithm(Exportar_cabo_eletrico())
         # add additional algorithms here
         # self.addAlgorithm(MyOtherAlgorithm())
 
