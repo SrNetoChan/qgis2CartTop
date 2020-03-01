@@ -7,8 +7,11 @@ from .exportar_linhas_de_quebra import Exportar_linhas_de_quebra
 from .exportar_elemento_associado_de_agua import Exportar_elemento_associado_de_agua
 from .exportar_elemento_associado_de_eletricidade import Exportar_elemento_associado_de_eletricidade
 from .exportar_cabo_eletrico import Exportar_cabo_eletrico
+from .exportar_construcao_linear import Exportar_construcao_linear
 from .exportar_designacao_local import Exportar_designacao_local
 from .exportar_mobiliario_urbano_sinal import Exportar_mob_urbano_sinal
+
+
 
 class Provider(QgsProcessingProvider):
 
@@ -20,6 +23,7 @@ class Provider(QgsProcessingProvider):
         self.addAlgorithm(Exportar_elemento_associado_de_agua())
         self.addAlgorithm(Exportar_elemento_associado_de_eletricidade())
         self.addAlgorithm(Exportar_cabo_eletrico())
+        self.addAlgorithm(Exportar_construcao_linear())
         self.addAlgorithm(Exportar_designacao_local())
         self.addAlgorithm(Exportar_mob_urbano_sinal())
         # add additional algorithms here
