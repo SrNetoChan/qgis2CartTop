@@ -19,6 +19,7 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
     INPUT = 'INPUT'
     HOMOGENIZE_Z_VALUES = 'HOMOGENIZE_Z_VALUES'
     VALOR_TIPO_CURVA = 'VALOR_TIPO_CURVA'
+    NIVEL_DE_DETALHE = 'NIVEL_DE_DETALHE'
     POSTGRES_CONNECTION = 'POSTGRES_CONNECTION'
 
 
@@ -65,17 +66,48 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
             )
         )
 
+        self.ndd_dict = {
+            'Skip':'0',
+            'NdD1':'2',
+            'NdD2':'5'
+        }
+
+        self.addParameter(
+            QgsProcessingParameterEnum(
+                self.NIVEL_DE_DETALHE,
+                self.tr('Determinar Valor Tipo Curva pelo nível de detalhe'),
+                optional=True,
+                options = list(self.ndd_dict.keys()),
+                defaultValue = 0
+            )
+        )
+
     def processAlgorithm(self, parameters, context, model_feedback):
         # Check if homogenize
 
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
         # overall progress through the model
+        n_steps = 3
         if parameters[self.HOMOGENIZE_Z_VALUES]:
-            feedback = QgsProcessingMultiStepFeedback(4, model_feedback)
-        else:
-            feedback = QgsProcessingMultiStepFeedback(2, model_feedback)
+            n_steps += 1
+
+        feedback = QgsProcessingMultiStepFeedback(n_steps, model_feedback)
         results = {}
         outputs = {}
+
+        # Extract Z values (majority) for further use in
+        # Homogenize Z values or Nivel de detalhe
+        alg_params = {
+            'COLUMN_PREFIX': 'z_',
+            'INPUT': parameters['INPUT'],
+            'SUMMARIES': [11],
+            'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
+        }
+        outputs['ExtractZValues'] = processing.run('native:extractzvalues', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+
+        feedback.setCurrentStep(1)
+        if feedback.isCanceled():
+            return {}
 
         # Convert enumerator to zero based index value
         valor_tipo_curva = self.parameterAsEnum(
@@ -83,6 +115,14 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
             self.VALOR_TIPO_CURVA,
             context
             ) + 1
+
+        vtc_exp = str(valor_tipo_curva)
+        
+        # If nivel de detalhe is set, automatically determine which value of Valor Tipo Curva to use
+        if parameters[self.NIVEL_DE_DETALHE] != 0:
+            vtc_exp = f"CASE WHEN z_majority % {parameters[self.NIVEL_DE_DETALHE] * 5} = 0 THEN '1'"  \
+                             f"WHEN z_majority % {parameters[self.NIVEL_DE_DETALHE]} = 0 THEN '2'" \
+                             f"ELSE '3' END"
 
         # Refactor fields
         alg_params = {
@@ -93,13 +133,19 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
                 'precision': -1,
                 'type': 14
             },{
-                'expression': str(valor_tipo_curva),
+                'expression': vtc_exp,
                 'length': 255,
                 'name': 'valor_tipo_curva',
                 'precision': -1,
                 'type': 10
+            },{
+                'expression': 'z_majority',
+                'length': -1,
+                'name': 'z_majority',
+                'precision': -1,
+                'type': 2
             }],
-            'INPUT': parameters['INPUT'],
+            'INPUT': outputs['ExtractZValues']['OUTPUT'],
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
         }
         outputs['RefactorFields'] = processing.run('qgis:refactorfields', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
@@ -109,24 +155,9 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
             return {}
 
         if parameters[self.HOMOGENIZE_Z_VALUES]:
-            # If Homogenize Z Values option is checked
-            # Correct possible wrong Z values along lines
-            # Extract Z values
+            # Use z_majority values to Set Z value
             alg_params = {
-                'COLUMN_PREFIX': 'z_',
                 'INPUT': outputs['RefactorFields']['OUTPUT'],
-                'SUMMARIES': [11],
-                'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
-            }
-            outputs['ExtractZValues'] = processing.run('native:extractzvalues', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
-
-            feedback.setCurrentStep(2)
-            if feedback.isCanceled():
-                return {}
-
-            # Set Z value
-            alg_params = {
-                'INPUT': outputs['ExtractZValues']['OUTPUT'],
                 'Z_VALUE': QgsProperty.fromExpression('"z_majority"'),
                 'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
             }
@@ -206,5 +237,8 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
                        "de dados RECART usando uma ligação PostgreSQL/PostGIS " \
                        "já configurada.\n\n" \
                        "A camada vectorial de input deve ser do tipo linha 3D.\n\n" \
-                       "A opção Homogenize Z Values permite corrigir vertices "
-                       "com valores anómalos em Z comparados com os restantes.")
+                       "A opção Homogenize Z Values permite corrigir vertices " \
+                       "com valores anómalos em Z comparados com os restantes.\n\n" \
+                       "Quando seleccionado um nível de detalhe o valor tipo curva será " \
+                       "definido automaticamente tendo em conta o valor de cota de cada curva"
+                       )
