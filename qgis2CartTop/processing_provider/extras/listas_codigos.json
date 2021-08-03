@@ -1,0 +1,681 @@
+{
+    "valorTipoMobUrbSinal": {
+        "Armário de semáforos": "1",
+        "Banco de jardim": "2",
+        "Canteiro": "3",
+        "Contentor": "4",
+        "Ecoponto": "5",
+        "Equipamento de exercício físico ao ar livre": "6",
+        "Estacionamento para velocípedes": "7",
+        "Marco de correio": "8",
+        "Painel publicitário": "9",
+        "Papeleira": "10",
+        "Parque infantil": "11",
+        "Parquímetro": "12",
+        "Passadeira de peões": "13",
+        "Placa informativa": "14",
+        "Pérgula": "15",
+        "Posto de carregamento elétrico": "16",
+        "Quiosque fixo": "17",
+        "Sanitário público": "18",
+        "Semáforo": "19",
+        "Sinal de trânsito": "20",
+        "Sinalização": "21"
+    },
+    "valorLocalGeodesico": {
+        "Igreja": "1",
+        "Catavento": "2",
+        "Construção": "3",
+        "Moinho": "4",
+        "Cruzeiro": "5",
+        "Castelo": "6",
+        "Depósito elevado": "7",
+        "Farol": "8",
+        "Posto de vigia": "9",
+        "Para-raios": "10",
+        "Terreno": "11",
+        "Não aplicável": "995"
+    },
+    "valorOrdem": {
+        "Primeira": "1",
+        "Segunda ou terceira": "2",
+        "Não aplicável": "995"
+    },
+    "valorTipoSinalGeodesico": {
+        "Estação Permanente": "1",
+        "Vértice Geodésico": "2",
+        "Marca de Nivelamento": "3",
+        "Marégrafo": "4",
+        "Estação Gravimétrica": "5"
+    },
+    "valorTipoPontoInteresse": {
+        "Alminha": "1",
+        "Anta": "2",
+        "Árvore": "3",
+        "Árvore classificada": "4",
+        "Castro": "5",
+        "Cruzeiro": "6",
+        "Estátua": "7",
+        "Menir": "8",
+        "Miradouro": "9",
+        "Padrão": "10",
+        "Pelourinho": "11",
+        "Ruínas com interesse histórico": "12",
+        "Outro": "13"
+    },
+    "valorTipoConstrucao": {
+        "Molhe": "1",
+        "Pontão": "2",
+        "Piscina": "3",
+        "Tanque": "4",
+        "Campo de jogos": "5",
+        "Lago de jardim": "6",
+        "Escadaria": "7",
+        "Bancada": "8",
+        "Passeio": "9",
+        "Limite da construção linear": "10",
+        "Rampa de acesso": "11"
+    },
+    "valorConstrucaoLinear": {
+        "Muro de alvenaria ou betão": "1",
+        "Muro de pedra": "2",
+        "Sebe": "3",
+        "Gradeamento ou vedação": "4",
+        "Muralha": "5",
+        "Portão": "6",
+        "Barreira acústica": "7",
+        "Pista": "8",
+        "Lancil": "9"
+    },
+    "valorCondicaoConst": {
+        "Demolido": "1",
+        "Desafetado": "2",
+        "Em construção": "3",
+        "Projetado": "4",
+        "Ruína": "5",
+        "Funcional": "6"
+    },
+    "valorElementoEdificioXY": {
+        "Combinado": "1",
+        "Ponto de entrada": "2",
+        "Invólucro": "3",
+        "Implantação": "4",
+        "Piso mais baixo acima do solo": "5",
+        "Beira do telhado": "6"
+    },
+    "valorElementoEdificioZ": {
+        "Invólucro acima do solo": "1",
+        "Base do edifício": "2",
+        "Ponto de entrada": "3",
+        "Cornija geral": "4",
+        "Solo geral": "5",
+        "Telhado geral": "6",
+        "Beira do telhado geral": "7",
+        "Cornija mais alta": "8",
+        "Ponto mais alto": "9",
+        "Beira mais alta do telhado": "10",
+        "Cornija mais baixa": "11",
+        "Piso mais baixo acima do solo": "12",
+        "Beira do telhado mais baixa": "13",
+        "Topo do edíficio": "14",
+        "Ponto mais alto no solo": "15",
+        "Ponto mais baixo no solo": "16"
+    },
+    "valorFormaEdificio": {
+        "Anfiteatro ao ar livre": "1",
+        "Arco": "2",
+        "Azenha": "3",
+        "Barraca": "4",
+        "Barragem": "5",
+        "Bunker": "6",
+        "Capela": "7",
+        "Castelo": "8",
+        "Chaminé": "9",
+        "Coreto": "10",
+        "Espigueiro": "11",
+        "Estádio": "12",
+        "Estufa": "13",
+        "Farol": "14",
+        "Forte": "15",
+        "Hangar": "16",
+        "Igreja": "17",
+        "Reservatório da mãe d'água": "18",
+        "Mesquita": "19",
+        "Moinho de vento": "20",
+        "Palácio": "21",
+        "Pombal": "22",
+        "Praça de touros": "23",
+        "Silo": "24",
+        "Sinagoga": "25",
+        "Depósito de armazenamento": "26",
+        "Telheiro": "27",
+        "Templo": "28",
+        "Torre": "29"
+    },
+    "valorUtilizacaoAtual": {
+        "Habitação": "1",
+        "Residencial": "1.1",
+        "Associado à residência": "1.2",
+        "Agricultura e pescas": "2",
+        "Agricultura": "2.1",
+        "Floresta ": "2.2",
+        "Pesca e aquicultura": "2.3",
+        "Indústria": "3",
+        "Comércio": "4",
+        "Comércio tradicional": "4.1",
+        "Mercado": "4.2",
+        "Centro comercial": "4.3",
+        "Grande loja": "4.4",
+        "Alojamento e restauração": "5",
+        "Alojamento": "5.1",
+        "Edifício de apoio ao alojamento": "5.2",
+        "Restauração": "5.3",
+        "Transportes": "6",
+        "Transporte aéreo": "6.1",
+        "Terminal aéreo": "6.1.1",
+        "Torre de controlo": "6.1.2",
+        "Transporte ferroviário": "6.2",
+        "Estação": "6.2.1",
+        "Apeadeiro": "6.2.2",
+        "Transporte por via navegável": "6.3",
+        "Terminal marítimo ou fluvial": "6.3.1",
+        "Centro de controlo": "6.3.2",
+        "Transporte rodoviário": "6.4",
+        "Paragem rodoviária": "6.4.1",
+        "Terminal rodoviário": "6.4.2",
+        "Parque de estacionamento em edifício": "6.4.3",
+        "Elevador ou ascensor": "6.5",
+        "Outro - Transportes": "6.6",
+        "Serviços": "7",
+        "Serviços da Administração Pública": "7.1",
+        "Serviços de utilização coletiva": "7.2",
+        "Outros - Serviços": "7.3",
+        "Serviços coletivos, sociais e pessoais": "8",
+        "Atividades associativas": "8.1",
+        "Culto e inumação": "8.2",
+        "Atividades recreativas e culturais": "8.3",
+        "Atividades desportivas e de lazer": "8.4",
+        "Organismos internacionais": "9"
+    },
+    "valorElementoAssociadoPGQ": {
+        "Petróleo ou derivados": "1",
+        "Gás": "2",
+        "Estação da RNTGN": "2.1",
+        "Estação de seccionamento": "2.1.1",
+        "Estação de derivação": "2.1.2",
+        "Estação de redução e medição de gás": "2.1.3",
+        "Ponto de entrega": "2.1.4",
+        "Instalação de armazenamento subterrâneo de gás natural": "2.2",
+        "Terminal de GNL": "2.3",
+        "Unidade autónoma de gás natural (UAG)": "2.4",
+        "Substâncias químicas": "3"
+    },
+    "valorDesignacaoTensao": {
+        "Muito alta": "1",
+        "Alta ": "2",
+        "Média": "3",
+        "Baixa": "4"
+    },
+    "valorPosicaoVertical": {
+        "Suspenso ou elevado": "1",
+        "Ao nível do solo": "0",
+        "No subsolo": "-1"
+    },
+    "valorElementoAssociadoElectricidade": {
+        "Central de produção elétrica": "1",
+        "Central hidroelétrica": "1.1",
+        "Central fotovoltaica": "1.2",
+        "Central eólica": "1.3",
+        "Central termoelétrica": "1.4",
+        "Subestação elétrica": "2",
+        "Aeromotor": "3",
+        "Gerador eólico": "4",
+        "Painel solar fotovoltaico": "5",
+        "Apoio de iluminação": "6",
+        "Apoio isolado de iluminação": "6.1",
+        "Apoio de iluminação e baixa tensão": "6.2",
+        "Apoio de eletricidade": "7",
+        "Apoio de alta tensão": "7.1",
+        "Apoio de média tensão": "7.2",
+        "Apoio de baixa tensão": "7.3",
+        "Apoio de muito alta tensão": "7.4",
+        "Posto transformador": "8",
+        "Posto de transformação aéreo": "9"
+    },
+    "valorInstalacaoProducao": {
+        "Pecuária": "1",
+        "Vacaria": "1.1",
+        "Suinicultura": "1.2",
+        "Aviário": "1.3",
+        "Matadouro": "1.4",
+        "Adega": "2",
+        "Lagar de azeite": "3",
+        "Indústria extrativa": "4",
+        "Pedreira": "4.1",
+        "Mina": "4.2",
+        "Extração de inertes": "4.3",
+        "Salina": "4.4",
+        "Fábrica": "5",
+        "Fábrica de materiais explosivos": "6",
+        "Oficina": "7",
+        "Oficina em geral": "7.1",
+        "Oficina de pirotecnia": "7.2",
+        "Oficina de reparação automóvel": "7.3",
+        "Estaleiro": "8",
+        "Armazém": "9",
+        "Estação de emissão ou receção": "10",
+        "Aquicultura": "11",
+        "Parque de sucata": "12"
+    },
+    "valorElementoAssociadoTelecomunicacoes": {
+        "Poste telefónico": "1",
+        "Cabina telefónica": "2",
+        "Antena": "3"
+    },
+    "valorTipoEquipamentoColetivo": {
+        "Educação e investigação": "1",
+        "Creche, infantário ou ensino pré-escolar": "1.1",
+        "Ensino básico ou secundário": "1.2",
+        "Ensino superior e investigação": "1.3",
+        "Serviços de apoio - Educação e investigação": "1.4",
+        "Outros - Educação e investigação": "1.5",
+        "Saúde ": "2",
+        "Hospital": "2.1",
+        "Centro de saúde": "2.2",
+        "Outro - saúde": "2.3",
+        "Ação social": "3",
+        "Segurança e ordem pública ": "4",
+        "Proteção civil e Bombeiros": "4.1",
+        "Forças de segurança": "4.2",
+        "Defesa": "5",
+        "Justiça": "6",
+        "Tribunal": "6.1",
+        "Estabelecimento prisional": "6.2",
+        "Desporto e lazer": "7",
+        "Parque e jardim": "7.1",
+        "Área verde": "7.2",
+        "Campo de golfe": "7.3",
+        "Outro – desporto e lazer": "7.4",
+        "Cemitério": "8"
+    },
+    "valorTipoAdmPublica": {
+        "Assembleia da República, Assembleia Regional": "1",
+        "Ministério, Gabinete do Secretário de Estado; Secretaria-geral": "2",
+        "Câmara Municipal, Assembleia Municipal": "3",
+        "Junta de Freguesia": "4",
+        "Outro - Administração pública": "5"
+    },
+    "valorInstalacaoDeGestaoAmbiental": {
+        "Resíduos sólidos": "1",
+        "Resíduos líquidos": "2",
+        "Resíduos industriais": "3",
+        "Resíduos tóxicos": "4"
+    },
+    "valorElementoAssociadoAgua": {
+        "Marco de incêndio": "1",
+        "Estação elevatória": "2",
+        "Estação de tratamento": "3",
+        "Fonte": "4",
+        "Poço": "5",
+        "Furo": "6",
+        "Reservatório de água": "7",
+        "Nora": "8",
+        "Estrutura de captação de água": "9",
+        "Câmara de visita": "10",
+        "Sumidouro": "11",
+        "Sarjeta": "12"
+    },
+    "valorGasodutoOleodutoSubQuimicas": {
+        "Gasoduto": "1",
+        "Gasoduto de 1º escalão": "1.1",
+        "Gasoduto de 2º escalão": "1.2",
+        "Gasoduto de 3º escalão": "1.3",
+        "Oleoduto": "2",
+        "Outros produtos": "3"
+    },
+    "valorCondutaAgua": {
+        "Aqueduto": "1",
+        "Conduta": "2",
+        "Valeta": "3"
+    },
+    "valorCategoriaBitola": {
+        "Ibérica": "1",
+        "Europeia ": "2",
+        "Métrica": "3",
+        "Não aplicável": "995"
+    },
+    "valorEstadoLinhaFerrea": {
+        "Desmantelada": "1",
+        "Em construção": "2",
+        "Em desuso": "3",
+        "Projetada": "4",
+        "Funcional": "5"
+    },
+    "valorPosicaoVerticalTransportes": {
+        "Suspenso ou elevado: nível acima do nível 2": "3",
+        "Suspenso ou elevado: nível 2, acima de nível 1": "2",
+        "Suspenso ou elevado: nível 1": "1",
+        "Ao nível do solo": "0",
+        "No subsolo: nível -1": "-1",
+        "No subsolo: nível mais profundo que nível -1": "-2",
+        "No subsolo: nível mais profundo que nível -2": "-3"
+    },
+    "valorTipoLinhaFerrea": {
+        "Ferrovia de cremalheira": "1",
+        "Funicular": "2",
+        "Levitação magnética": "3",
+        "Metro": "4",
+        "Carril único": "5",
+        "Carril único (suspenso)": "6",
+        "Comboio (dois carris paralelos)": "7",
+        "Elétrico": "8"
+    },
+    "valorTipoTrocoViaFerrea": {
+        "Via única": "1",
+        "Via dupla": "2",
+        "Via múltipla": "3"
+    },
+    "valorViaFerrea": {
+        "Plena via": "1",
+        "Linha de estação": "2",
+        "Linha de estacionamento": "3",
+        "Linha de segurança": "4",
+        "Ramal particular": "5"
+    },
+    "valorTipoNoTransFerrov": {
+        "Junção": "1",
+        "Passagem de nível": "2",
+        "Pseudo-nó": "3",
+        "Fim da via ferroviária": "4",
+        "Paragem": "5"
+    },
+    "valorTipoInfraTransFerrov": {
+        "Local de estação": "1",
+        "Local de apeadeiro": "2"
+    },
+    "valorTipoUsoInfraTransFerrov": {
+        "Passageiros": "1",
+        "Mercadorias": "2",
+        "Misto": "3"
+    },
+    "valorTipoObraArte": {
+        "Ponte": "1",
+        "Viaduto": "2",
+        "Passagem superior": "3",
+        "Passagem inferior": "4",
+        "Túnel": "5",
+        "Passagem hidráulica": "6",
+        "Passagem pedonal": "7",
+        "Pilar": "8"
+    },
+    "valorTipoInfraTransViaNavegavel": {
+        "Porto": "1",
+        "Cais": "2",
+        "Doca": "3"
+    },
+    "valorTipoAreaInfraTransViaNavegavel": {
+        "Área do porto": "1",
+        "Área do cais": "2",
+        "Área da doca": "3"
+    },
+    "valorTipoViaCabo": {
+        "Cabina": "1",
+        "Cadeira": "2",
+        "Teleski": "3"
+    },
+    "valorTipoAreaInfraTransAereo": {
+        "Área da infraestrutura": "1",
+        "Área de pista": "2",
+        "Área de circulação": "3",
+        "Plataforma de estacionamento": "4"
+    },
+    "valorCategoriaInfraTransAereo": {
+        "Internacional": "1",
+        "Nacional": "2",
+        "Regional": "3"
+    },
+    "valorRestricaoInfraTransAereo": {
+        "Fins exclusivamente militares": "1",
+        "Restrições temporais": "2",
+        "Não aplicável": "995"
+    },
+    "valorTipoInfraTransAereo": {
+        "Aeródromo": "1",
+        "Heliporto": "2",
+        "Aeródromo com heliporto": "3",
+        "Local de aterragem": "4"
+    },
+    "valorTipoLimite": {
+        "Limite exterior sem berma": "1",
+        "Separador": "2",
+        "Limite exterior com berma pavimentada": "3"
+    },
+    "valorTipoInfraTransRodov": {
+        "Local de paragem": "1",
+        "Terminal": "2",
+        "Parqueamento": "3",
+        "Parque de estacionamento": "4",
+        "Portagem": "5",
+        "Área de repouso": "6",
+        "Área de serviço": "7",
+        "Posto de abastecimento de combustíveis": "8"
+    },
+    "valorTipoServico": {
+        "Abastecimento de combustível": "1",
+        "Carregamento elétrico": "2",
+        "Loja de conveniência ": "3",
+        "Restauração": "4",
+        "Estacionamento": "5",
+        "Estacionamento para veículos pesados": "6",
+        "Estacionamento para caravanas": "7",
+        "Apoio automóvel": "8",
+        "Parque infantil": "9",
+        "Instalações sanitárias": "10",
+        "Duche": "11",
+        "Área de piquenique": "12",
+        "Não aplicável": "995"
+    },
+    "valorEstadoViaRodov": {
+        "Desmantelada": "1",
+        "Em construção": "2",
+        "Em desuso": "3",
+        "Projetada": "4",
+        "Funcional": "5"
+    },
+    "valorCaractFisicaViaRodov": {
+        "Autoestrada ou via reservada a automóveis e motociclos": "1",
+        "Estrada": "2",
+        "Via urbana": "3",
+        "Via rural": "4",
+        "Aceiro": "5",
+        "Ciclovia": "6"
+    },
+    "valorRestricaoAcesso": {
+        "Livre": "1",
+        "Pago": "2",
+        "Privado": "3",
+        "Proibido por lei": "4",
+        "Sazonal": "5",
+        "Acesso físico impossível": "6"
+    },
+    "valorSentido": {
+        "Duplo": "1",
+        "No sentido": "2",
+        "Sentido contrário": "3"
+    },
+    "valorTipoCirculacao": {
+        "Veículo ligeiro ou pesado": "1",
+        "Veículo agrícola ou com tração às quatro rodas": "2",
+        "Velocípede": "3",
+        "Pedonal": "4"
+    },
+    "valorTipoTrocoRodoviario": {
+        "Plena via": "1",
+        "Ramo de ligação ": "2",
+        "Rotunda": "3",
+        "Via de serviço": "4",
+        "Via em escada": "5",
+        "Trilho": "6",
+        "Passadiço": "7"
+    },
+    "valorTipoNoTransRodov": {
+        "Junção": "1",
+        "Passagem de nível": "2",
+        "Pseudo-nó": "3",
+        "Fim da via rodoviária": "4",
+        "Infraestrutura": "5"
+    },
+    "valorEstadoFronteira": {
+        "Definido": "1",
+        "Por acordar": "2"
+    },
+    "valorAreasAgricolasFlorestaisMatos": {
+        "Agricultura": "1",
+        "Cultura temporária de sequeiro e regadio": "1.1",
+        "Arrozal": "1.2",
+        "Vinha": "1.3",
+        "Pomar": "1.4",
+        "Olival": "1.5",
+        "Pastagem": "2",
+        "Pastagem permanente": "2.1",
+        "Vegetação herbácea natural": "2.2",
+        "Sistema agroflorestal": "3",
+        "Floresta": "4",
+        "Floresta de folhosas": "4.1",
+        "Sobreiro": "4.1.1",
+        "Azinheira": "4.1.2",
+        "Carvalho": "4.1.3",
+        "Castanheiro": "4.1.4",
+        "Eucalipto": "4.1.5",
+        "Espécie invasora": "4.1.6",
+        "Outras folhosas": "4.1.7",
+        "Floresta de resinosas": "4.2",
+        "Pinheiro manso": "4.2.1",
+        "Pinheiro bravo": "4.2.2",
+        "Outras resinosas": "4.2.3",
+        "Mato": "5"
+    },
+    "valorAreasArtificializadas": {
+        "Equipamentos de saúde": "1",
+        "Equipamentos de educação": "2",
+        "Equipamentos industriais": "3",
+        "Equipamentos comerciais ou de carácter geral": "4",
+        "Área de deposição de resíduos": "5",
+        "Área em construção": "6",
+        "Instalação desportiva e de lazer": "7",
+        "Parque de campismo": "8",
+        "Área de inumação": "9"
+    },
+    "valorLocalNomeado": {
+        "Capital do País": "1",
+        "Sede administrativa de Região Autónoma": "2",
+        "Capital de Distrito": "3",
+        "Sede de Concelho": "4",
+        "Sede de Freguesia": "5",
+        "Forma de relevo": "6",
+        "Serra": "6.1",
+        "Cabo": "6.2",
+        "Ria": "6.3",
+        "Ponta": "6.4",
+        "Península": "6.5",
+        "Baía": "6.6",
+        "Enseada": "6.7",
+        "Ínsua": "6.8",
+        "Dunas": "6.9",
+        "Fajã": "6.10",
+        "Lugar": "7",
+        "Cidade": "7.1",
+        "Vila": "7.2",
+        "Outro aglomerado": "7.3",
+        "Designação local": "8",
+        "Área protegida": "9",
+        "Praia": "10",
+        "Oceano": "11",
+        "Arquipélago": "12",
+        "Ilha": "13",
+        "Ilhéu": "14",
+        "Outro - Local nomeado": "15"
+    },
+    "valorZonaHumida": {
+        "Sapal": "1",
+        "Turfeira": "2",
+        "Paul": "3"
+    },
+    "valorCursoDeAgua": {
+        "Rio navegável ou flutuável": "1",
+        "Rio não navegável nem flutuável": "2",
+        "Ribeira": "3",
+        "Linha de água": "4",
+        "Canal": "5",
+        "Vala": "6"
+    },
+    "valorPersistenciaHidrologica": {
+        "Seco": "1",
+        "Efémero": "2",
+        "Intermitente": "3",
+        "Perene": "4"
+    },
+    "valorTipoMargem": {
+        "Pedregulho": "1",
+        "Argila": "2",
+        "Cascalho": "3",
+        "Lama": "4",
+        "Rocha": "5",
+        "Areia": "6",
+        "Seixos": "7",
+        "Pedra": "8",
+        "Não aplicável": "995"
+    },
+    "valorAguaLentica": {
+        "Lagoa": "1",
+        "Albufeira": "2",
+        "Charca": "3"
+    },
+    "valorBarreira": {
+        "Comporta": "1",
+        "Eclusa": "2",
+        "Barreira da barragem de betão": "3",
+        "Barreira da barragem de terra": "4",
+        "Barreira do açude ou represa": "5",
+        "Dique": "6"
+    },
+    "valorTipoNoHidrografico": {
+        "Início": "1",
+        "Fim": "2",
+        "Junção": "3",
+        "Pseudo-nó": "4",
+        "Variação de fluxo": "5",
+        "Regulação de fluxo": "6",
+        "Fronteira": "7"
+    },
+    "valorTipoNascente": {
+        "Água de nascente": "1",
+        "Água mineral": "2"
+    },
+    "valorTipoCurva": {
+        "Mestra": "1",
+        "Secundária": "2",
+        "Auxiliar": "3"
+    },
+    "valorClassifica": {
+        "Base do declive": "1",
+        "Alteração no declive": "2",
+        "Linha de forma": "3",
+        "Linha de talvegue": "4",
+        "Linha de cumeada": "5",
+        "Topo do declive": "6"
+    },
+    "valorNaturezaLinha": {
+        "Escarpado": "1",
+        "Talude": "2",
+        "Socalco": "3",
+        "Combro": "4"
+    },
+    "valorClassificaLAS": {
+        "Terreno": "1",
+        "Edifício": "2",
+        "Edifício - soleira": "2.1",
+        "Edifício - beirado": "2.2",
+        "Edifício - ponto mais alto": "2.3"
+    }
+}

@@ -13,6 +13,7 @@
 
 import json
 import re
+import os, fnmatch
 
 class recartObject():
     def __init__(self, path):
@@ -59,14 +60,38 @@ def convert(name):
     return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
 def main():
-    o = recartObject('ConstruLinear.json')
-    print(o.name)
-    print(o.long_name)
-    print(o.theme)
-    if o.is3d:
-        print("It's a 3D")
-    print(o.attributes())
-    print(o.domains())
+    # Get RECART objects folder absolute path
+    objects_path = os.path.abspath(os.path.join(os.path.dirname( __file__ )
+        , '..'
+        , 'RECART'
+        , 'objectos'))
+
+    # Find all JSON files
+    filepaths = []
+    for root, dirnames, filenames in os.walk(objects_path):
+        for filename in fnmatch.filter(filenames, '*.json'):
+            if filename != 'relacoes.json':
+                filepaths.append(os.path.join(root, filename))
+
+    # Create dictionary with all code domains
+    listas_codigos = {}
+    for file in filepaths:
+        o = recartObject(file)
+        listas_codigos.update(o.domains())
+    
+    # Save all code domains into a json file
+    listas_codigos_path = os.path.abspath(os.path.join(os.path.dirname( __file__ )
+        , '..'
+        , 'qgis2CartTop'
+        , 'processing_provider'
+        , 'extras'
+        , 'listas_codigos.json'))
+
+    # note that output.json must already exist at this point
+    with open(listas_codigos_path, 'w', encoding='utf8') as f:
+        # this would place the entire output on one line
+        # use json.dump(lista_items, f, indent=4) to "pretty-print" with four spaces per indent
+        json.dump(listas_codigos, f, indent = 4, ensure_ascii=False)
 
 if __name__ == "__main__":
     main()
