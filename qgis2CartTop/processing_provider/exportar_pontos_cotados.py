@@ -7,7 +7,7 @@ from qgis.core import (QgsProcessing,
                        QgsProperty,
                        QgsProcessingParameterBoolean)
 import processing
-from .utils import get_postgres_connections
+from .utils import get_postgres_connections, get_lista_codigos
 
 
 class Exportar_pontos_cotados(QgsProcessingAlgorithm):
@@ -42,11 +42,13 @@ class Exportar_pontos_cotados(QgsProcessingAlgorithm):
             )
         )
 
+        self.vcl_keys, self.vcl_values = get_lista_codigos('valorClassificaLAS')
+
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.VALOR_CLASSIFICA_LAS,
-                self.tr('valorClassificaLAS'),
-                ['Terreno', 'Edifício', 'Edifício - soleira', 'Edifício - beirado', 'Edifício - ponto mais alto'],
+                self.tr('Valor Classifica LAS'),
+                self.vcl_keys,
                 defaultValue=0,
                 optional=False,
             )
@@ -59,12 +61,14 @@ class Exportar_pontos_cotados(QgsProcessingAlgorithm):
         results = {}
         outputs = {}
 
-        # Convert enumerator to zero based index value
-        valor_classifica_las = self.parameterAsEnum(
-            parameters,
-            self.VALOR_CLASSIFICA_LAS,
-            context
-            ) + 1
+        # Convert enumerator to actual value
+        valor_classifica_las = self.vcl_values[
+            self.parameterAsEnum(
+                parameters,
+                self.VALOR_CLASSIFICA_LAS,
+                context
+                )
+            ]
 
         # Refactor fields
         alg_params = {
@@ -75,7 +79,7 @@ class Exportar_pontos_cotados(QgsProcessingAlgorithm):
                 'precision': -1,
                 'type': 14
             },{
-                'expression': str(valor_classifica_las),
+                'expression': valor_classifica_las,
                 'length': 255,
                 'name': 'valor_classifica_las',
                 'precision': -1,

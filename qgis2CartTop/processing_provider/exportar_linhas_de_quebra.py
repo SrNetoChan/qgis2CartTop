@@ -7,7 +7,7 @@ from qgis.core import (QgsProcessing,
                        QgsProperty,
                        QgsProcessingParameterBoolean)
 import processing
-from .utils import get_postgres_connections
+from .utils import get_postgres_connections, get_lista_codigos
 
 
 class Exportar_linhas_de_quebra(QgsProcessingAlgorithm):
@@ -43,21 +43,26 @@ class Exportar_linhas_de_quebra(QgsProcessingAlgorithm):
             )
         )
 
+        self.vc_keys, self.vc_values = get_lista_codigos('valorClassifica')
+
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.VALOR_CLASSIFICA,
-                self.tr('valorClassifica'),
-                ['Base do declive', 'Alteração no declive', 'Linha de forma', 'Linha de talvegue', 'Linha de cumeada', 'Topo do declive'],
+                self.tr('Valor Classifica'),
+                self.vc_keys,
                 defaultValue=0,
                 optional=False,
             )
         )
 
+        self.vnl_keys, self.vnl_values = get_lista_codigos('valorNaturezaLinha')
+
+
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.VALOR_NATUREZA_LINHA,
-                self.tr('valorNaturezaLinha'),
-                ['Escarpado', 'Talude', 'Socalco', 'Combro'],
+                self.tr('Valor Natureza Linha'),
+                self.vnl_keys,
                 defaultValue=1,
                 optional=False,
             )
@@ -70,18 +75,22 @@ class Exportar_linhas_de_quebra(QgsProcessingAlgorithm):
         results = {}
         outputs = {}
 
-        # Convert enumerator to zero based index value
-        valor_classifica = self.parameterAsEnum(
-            parameters,
-            self.VALOR_CLASSIFICA,
-            context
-            ) + 1
-
-        valor_natureza_linha = self.parameterAsEnum(
-            parameters,
-            self.VALOR_NATUREZA_LINHA,
-            context
-            ) + 1
+        # Convert enumerators to actual values
+        valor_classifica = self.vc_values[
+            self.parameterAsEnum(
+                parameters,
+                self.VALOR_CLASSIFICA,
+                context
+                )
+            ]
+        
+        valor_natureza_linha = self.vnl_values[
+            self.parameterAsEnum(
+                parameters,
+                self.VALOR_NATUREZA_LINHA,
+                context
+                )
+            ]
 
         # Refactor fields
         alg_params = {

@@ -7,7 +7,7 @@ from qgis.core import (QgsProcessing,
                        QgsProperty,
                        QgsProcessingParameterBoolean)
 import processing
-from .utils import get_postgres_connections
+from .utils import get_postgres_connections , get_lista_codigos
 
 
 class Exportar_designacao_local(QgsProcessingAlgorithm):
@@ -42,44 +42,14 @@ class Exportar_designacao_local(QgsProcessingAlgorithm):
             )
         )
 
-        self.valor_local_nomeado_dict = {
-            'Capital do País':'1',
-            'Sede administrativa de Região Autónoma':'2',
-            'Capital de Distrito':'3',
-            'Sede de Concelho':'4',
-            'Sede de Freguesia':'5',
-            'Forma de relevo':'6',
-            'Serra':'6.1',
-            'Cabo':'6.2',
-            'Ria':'6.3',
-            'Pico':'6.4',
-            'Península':'6.5',
-            'Baía':'6.6',
-            'Enseada':'6.7',
-            'Ínsua':'6.8',
-            'Dunas':'6.9',
-            'Fajã':'6.10',
-            'Lugar':'7',
-            'Cidade':'7.1',
-            'Vila':'7.2',
-            'Outro aglomerado':'7.3',
-            'Designação local':'8',
-            'Área protegida':'9',
-            'Praia':'10',
-            'Oceano':'11',
-            'Arquipélago':'12',
-            'Ilha':'13',
-            'Ilhéu':'14',
-            'Outro local nomeado':'15'
-        }
-
+        self.vln_keys, self.vln_values = get_lista_codigos('valorLocalNomeado')
 
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.VALOR_LOCAL_NOMEADO,
-                self.tr('valorLocalNomeado'),
-                list(self.valor_local_nomeado_dict.keys()),
-                defaultValue=1,
+                self.tr('Valor Local Nomeado'),
+                self.vln_keys,
+                defaultValue=0,
                 optional=False,
             )
         )
@@ -91,12 +61,14 @@ class Exportar_designacao_local(QgsProcessingAlgorithm):
         results = {}
         outputs = {}
 
-        # Convert enumerator to zero based index value
-        valor_local_nomeado = self.parameterAsEnum(
-            parameters,
-            self.VALOR_LOCAL_NOMEADO,
-            context
-            ) + 1
+        # Convert enumerator(s) to actual values
+        valor_local_nomeado = self.vln_values[
+            self.parameterAsEnum(
+                parameters,
+                self.VALOR_LOCAL_NOMEADO,
+                context
+                )
+            ]
 
         # Refactor fields
         alg_params = {
@@ -107,7 +79,7 @@ class Exportar_designacao_local(QgsProcessingAlgorithm):
                 'precision': -1,
                 'type': 14
             },{
-                'expression': str(valor_local_nomeado),
+                'expression': valor_local_nomeado,
                 'length': 255,
                 'name': 'valor_local_nomeado',
                 'precision': -1,

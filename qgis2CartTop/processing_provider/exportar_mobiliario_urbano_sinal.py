@@ -7,7 +7,7 @@ from qgis.core import (QgsProcessing,
                        QgsProperty,
                        QgsProcessingParameterBoolean)
 import processing
-from .utils import get_postgres_connections
+from .utils import get_postgres_connections, get_lista_codigos
 
 
 class Exportar_mob_urbano_sinal(QgsProcessingAlgorithm):
@@ -42,37 +42,13 @@ class Exportar_mob_urbano_sinal(QgsProcessingAlgorithm):
             )
         )
 
-        self.valor_tipo_de_mob_urbano_sinal_dict = {
-            'Armário de semáforos':'1',
-            'Banco de jardim':'2',
-            'Canteiro':'3',
-            'Contentor':'4',
-            'Ecoponto':'5',
-            'Equipamento de exercício físico ao ar livre':'6',
-            'Estacionamento para velocipedes':'7',
-            'Marco de correio':'8',
-            'Painel publicitário':'9',
-            'Papeleira':'10',
-            'Parque infantil':'11',
-            'Parquímetro':'12',
-            'Passadeira de peões':'13',
-            'Placa informativa':'14',
-            'Pérgula':'15',
-            'Posto de carregamento elétrico':'16',
-            'Quiosque fixo':'17',
-            'Sanitário público':'18',
-            'Semáforo':'19',
-            'Sinal de trânsito':'20',
-            'Sinalização':'21'
-
-        }
-
+        self.vtmus_keys, self.vtmus_values = get_lista_codigos('valorTipoMobUrbSinal')
 
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.VALOR_TIPO_MOBURBSINAL,
                 self.tr('valor_tipo_de_mob_urbano_sinal'),
-                list(self.valor_tipo_de_mob_urbano_sinal_dict.keys()),
+                self.vtmus_keys,
                 defaultValue=1,
                 optional=False,
             )
@@ -85,12 +61,14 @@ class Exportar_mob_urbano_sinal(QgsProcessingAlgorithm):
         results = {}
         outputs = {}
 
-        # Convert enumerator to zero based index value
-        valor_local_nomeado = self.parameterAsEnum(
-            parameters,
-            self.VALOR_TIPO_MOBURBSINAL,
-            context
-            ) + 1
+        # Convert enumerator to actual value
+        valor_tipo_de_mob_urbano_sinal = self.vtmus_values[
+            self.parameterAsEnum(
+                parameters,
+                self.VALOR_TIPO_MOBURBSINAL,
+                context
+                )
+            ]
 
         # Refactor fields
         alg_params = {

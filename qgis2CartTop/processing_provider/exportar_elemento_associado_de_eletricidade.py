@@ -8,7 +8,7 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterBoolean,
                        QgsProcessingUtils)
 import processing
-from .utils import get_postgres_connections
+from .utils import get_postgres_connections, get_lista_codigos
 
 
 class Exportar_elemento_associado_de_eletricidade(QgsProcessingAlgorithm):
@@ -43,28 +43,13 @@ class Exportar_elemento_associado_de_eletricidade(QgsProcessingAlgorithm):
             )
         )
 
-        self.valor_elemento_associado_eletricidade_dict = {
-            'Central elétrica':'1.1',
-            'Central fotovoltaica':'1.2',
-            'Central eólica':'1.3',
-            'Central termoelétrica':'1.4',
-            'Subestação':'2',
-            'Aeromotor':'3',
-            'Gerador eólico':'4',
-            'Painel solar fotovoltaico':'5',
-            'Poste de iluminação':'6',
-            'Poste de alta tensão':'7.1',
-            'Poste de média tensão':'7.2',
-            'Poste de baixa tensão':'7.3',
-            'Torre de alta tensão':'7.4',
-            'Posto transformador':'8'
-        }
+        self.veae_keys, self.veae_values = get_lista_codigos('valorElementoAssociadoElectricidade')
 
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.VALOR_ELEMENTO_ASSOCIADO_ELECTRICIDADE,
                 self.tr('valorElementoAssociadoElectricidade'),
-                list(self.valor_elemento_associado_eletricidade_dict.keys()),
+                self.veae_keys,
                 defaultValue=0,
                 optional=False,
             )
@@ -77,14 +62,17 @@ class Exportar_elemento_associado_de_eletricidade(QgsProcessingAlgorithm):
         results = {}
         outputs = {}
 
-        # Convert enumerator to final value
-        enum = self.parameterAsEnum(
-            parameters,
-            self.VALOR_ELEMENTO_ASSOCIADO_ELECTRICIDADE,
-            context
-            )
-
         valor_associado_eletricidade = list(self.valor_elemento_associado_eletricidade_dict.values())[enum]
+
+        # Convert enumerator to actual value
+        valor_associado_eletricidade = self.veae_values[
+            self.parameterAsEnum(
+                parameters,
+                self.VALOR_ELEMENTO_ASSOCIADO_ELECTRICIDADE,
+                context
+                )
+            ]
+
 
         # Refactor fields
         alg_params = {

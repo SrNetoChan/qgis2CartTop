@@ -8,7 +8,7 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterBoolean,
                        QgsProcessingUtils)
 import processing
-from .utils import get_postgres_connections
+from .utils import get_postgres_connections, get_lista_codigos
 
 
 class Exportar_cabo_eletrico(QgsProcessingAlgorithm):
@@ -44,22 +44,28 @@ class Exportar_cabo_eletrico(QgsProcessingAlgorithm):
             )
         )
 
+        self.vdt_keys, self.vdt_values = get_lista_codigos('valorDesignacaoTensao')
+
+
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.VALOR_DESIGNACAO_TENSAO,
-                self.tr('valorDesignacaoTensao'),
-                ['Muito alta', 'Alta ', 'Média', 'Baixa'],
-                defaultValue=0,
+                self.tr('Valor Designacao Tensao'),
+                self.vdt_keys,
+                defaultValue=3,
                 optional=False,
             )
         )
 
+        self.vpv_keys, self.vpv_values = get_lista_codigos('valorPosicaoVertical')
+
+
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.VALOR_POSICAO_VERTICAL,
-                self.tr('valorPosicaoVertical'),
-                ['Suspenso ou elevado', 'Ao nível do solo', 'No subsolo'],
-                defaultValue=0,
+                self.tr('Valor Posicao Vertical'),
+                self.vpv_keys,
+                defaultValue=1,
                 optional=False,
             )
         )
@@ -71,19 +77,23 @@ class Exportar_cabo_eletrico(QgsProcessingAlgorithm):
         results = {}
         outputs = {}
 
-        # Convert enumerator to 1 based index value
-        valor_designacao_tensao = self.parameterAsEnum(
-            parameters,
-            self.VALOR_DESIGNACAO_TENSAO,
-            context
-            ) + 1
+        # Convert enumerator(s) to actual values
+        valor_designacao_tensao = self.vdt_values[
+            self.parameterAsEnum(
+                parameters,
+                self.VALOR_DESIGNACAO_TENSAO,
+                context
+                )
+            ]
 
-        # Convert enumerator to -1 based index value
-        valor_posicao_vertical = self.parameterAsEnum(
-            parameters,
-            self.VALOR_POSICAO_VERTICAL,
-            context
-            ) - 1
+        valor_posicao_vertical = self.vpv_values[
+            self.parameterAsEnum(
+                parameters,
+                self.VALOR_POSICAO_VERTICAL,
+                context
+                )
+            ]
+
 
         # Refactor fields
         alg_params = {

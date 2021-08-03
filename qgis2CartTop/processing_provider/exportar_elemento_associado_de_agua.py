@@ -8,7 +8,7 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterBoolean,
                        QgsProcessingUtils)
 import processing
-from .utils import get_postgres_connections
+from .utils import get_postgres_connections, get_lista_codigos
 
 
 class Exportar_elemento_associado_de_agua(QgsProcessingAlgorithm):
@@ -43,11 +43,13 @@ class Exportar_elemento_associado_de_agua(QgsProcessingAlgorithm):
             )
         )
 
+        self.veaa_keys, self.veaa_values = get_lista_codigos('valorElementoAssociadoAgua')
+
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.VALOR_ELEMENTO_ASSOCIADO_AGUA,
                 self.tr('valorElementoAssociadoAgua'),
-                ['Marco de incêndio', 'Estação elevatória', 'Estação de tratamento', 'Fonte', 'Poço', 'Furo', 'Reservatório de água', 'Nora', 'Estrutura de captação de água', 'Câmara de visita', 'Sumidouro', 'Sarjeta'],
+                self.veaa_keys,
                 defaultValue=0,
                 optional=False,
             )
@@ -60,12 +62,14 @@ class Exportar_elemento_associado_de_agua(QgsProcessingAlgorithm):
         results = {}
         outputs = {}
 
-        # Convert enumerator to zero based index value
-        valor_associado_agua = self.parameterAsEnum(
-            parameters,
-            self.VALOR_ELEMENTO_ASSOCIADO_AGUA,
-            context
-            ) + 1
+        # Convert enumerator to actual value
+        valor_associado_agua = self.veaa_values[
+            self.parameterAsEnum(
+                parameters,
+                self.VALOR_ELEMENTO_ASSOCIADO_AGUA,
+                context
+                )
+            ]
 
         # Refactor fields
         alg_params = {

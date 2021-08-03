@@ -8,7 +8,7 @@ from qgis.core import (QgsProcessing,
                        QgsProperty,
                        QgsProcessingParameterBoolean)
 import processing
-from .utils import get_postgres_connections
+from .utils import get_postgres_connections, get_lista_codigos
 
 
 class Exportar_construcao_linear(QgsProcessingAlgorithm):
@@ -46,11 +46,13 @@ class Exportar_construcao_linear(QgsProcessingAlgorithm):
             )
         )
 
+        self.vcl_keys, self.vcl_values = get_lista_codigos('valorConstrucaoLinear')
+
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.VALOR_CONSTRUCAO_LINEAR,
-                self.tr('valorConstrucaoLinear'),
-                ['Muro de alvenaria ou betão', 'Muro de pedra solta', 'Sebe', 'Gradeamento ou vedação', 'Muralha', 'Portão', 'Barreira acústica', 'Pista'],
+                self.tr('Valor Construcao Linear'),
+                self.vcl_keys,
                 defaultValue=0,
                 optional=False,
             )
@@ -94,12 +96,14 @@ class Exportar_construcao_linear(QgsProcessingAlgorithm):
         results = {}
         outputs = {}
 
-        # Convert enumerator from zero based index value
-        valor_construcao_linear = self.parameterAsEnum(
-            parameters,
-            self.VALOR_CONSTRUCAO_LINEAR,
-            context
-            ) + 1
+        # Convert enumerator(s) to actual values
+        valor_construcao_linear = self.vcl_values[
+            self.parameterAsEnum(
+                parameters,
+                self.VALOR_CONSTRUCAO_LINEAR,
+                context
+                )
+            ]
 
         # Refactor fields
         alg_params = {
@@ -110,7 +114,7 @@ class Exportar_construcao_linear(QgsProcessingAlgorithm):
                 'precision': -1,
                 'type': 14
             }, {
-                'expression': str(valor_construcao_linear),
+                'expression': valor_construcao_linear,
                 'length': 255,
                 'name': 'valor_construcao_linear',
                 'precision': -1,

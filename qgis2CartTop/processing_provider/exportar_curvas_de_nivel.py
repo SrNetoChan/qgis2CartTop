@@ -7,7 +7,7 @@ from qgis.core import (QgsProcessing,
                        QgsProperty,
                        QgsProcessingParameterBoolean)
 import processing
-from .utils import get_postgres_connections
+from .utils import get_postgres_connections, get_lista_codigos
 
 
 class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
@@ -51,17 +51,13 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
             )
         )
 
-        self.valor_tipo_curva_dict = {
-            'Mestra':'1',
-            'Secundária':'2',
-            'Auxiliar':'3'
-        }
-
+        self.vtc_keys, self.vtc_values = get_lista_codigos('valorTipoCurva')
+        
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.VALOR_TIPO_CURVA,
                 self.tr('Valor tipo curva'),
-                list(self.valor_tipo_curva_dict.keys()),
+                self.vtc_keys,
                 defaultValue = 1
             )
         )
@@ -109,14 +105,14 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
         if feedback.isCanceled():
             return {}
 
-        # Convert enumerator to zero based index value
+        # Convert enumerator to actual value
         valor_tipo_curva = self.parameterAsEnum(
             parameters,
             self.VALOR_TIPO_CURVA,
             context
-            ) + 1
+            )
 
-        vtc_exp = str(valor_tipo_curva)
+        vtc_exp = self.vtc_values[valor_tipo_curva]
         
         # If nivel de detalhe is set, automatically determine which value of Valor Tipo Curva to use
         if parameters[self.NIVEL_DE_DETALHE] != 0:
