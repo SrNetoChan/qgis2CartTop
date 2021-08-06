@@ -11,6 +11,7 @@ from .exportar_construcao_linear import Exportar_construcao_linear
 from .exportar_designacao_local import Exportar_designacao_local
 from .exportar_mobiliario_urbano_sinal import Exportar_mob_urbano_sinal
 from .exportar_unidades_administrativas import ExportarUnidadesAdministrativas
+from .exportar_fronteira import ExportarFronteira
 
 
 
@@ -28,6 +29,7 @@ class Provider(QgsProcessingProvider):
         self.addAlgorithm(Exportar_designacao_local())
         self.addAlgorithm(Exportar_mob_urbano_sinal())
         self.addAlgorithm(ExportarUnidadesAdministrativas())
+        self.addAlgorithm(ExportarFronteira())
         # add additional algorithms here
         # self.addAlgorithm(MyOtherAlgorithm())
 
