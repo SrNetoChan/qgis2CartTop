@@ -99,7 +99,31 @@ class ExportarUnidadesAdministrativas(QgsProcessingAlgorithm):
 
         # Refactor fields
         alg_params = {
-            'FIELDS_MAPPING': [{'expression': 'now()','length': -1,'name': 'inicio_objeto','precision': 0,'type': 16},{'expression': f"\'{parameters['Datadepublicacao']}\'",'length': -1,'name': 'data_publicacao','precision': 0,'type': 14},{'expression': '\"dicofre\"','length': 255,'name': 'dicofre','precision': 0,'type': 10},{'expression': '\"Freguesia\"','length': 255,'name': 'nome','precision': 0,'type': 10}],
+            'FIELDS_MAPPING': [{
+                'expression': 'now()',
+                'length': -1,
+                'name': 'inicio_objeto',
+                'precision': 0,
+                'type': 16
+            },{
+                'expression': f"\'{parameters['Datadepublicacao']}\'",
+                'length': -1,
+                'name': 'data_publicacao',
+                'precision': 0,
+                'type': 14
+            },{
+                'expression': '\"dicofre\"',
+                'length': 255,
+                'name': 'dicofre',
+                'precision': 0,
+                'type': 10
+            },{
+                'expression': '\"Freguesia\"',
+                'length': 255,
+                'name': 'nome',
+                'precision': 0,
+                'type': 10
+            }],
             'INPUT': outputs['ExtractByLocation']['OUTPUT'],
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
         }
@@ -172,7 +196,31 @@ class ExportarUnidadesAdministrativas(QgsProcessingAlgorithm):
 
         # Refactor fields
         alg_params = {
-            'FIELDS_MAPPING': [{'expression': 'now()','length': 0,'name': 'inicio_objeto','precision': 0,'type': 16},{'expression': ' left(\"Dicofre\",2)','length': 255,'name': 'di','precision': 0,'type': 10},{'expression': '\"Distrito\"','length': 255,'name': 'nome','precision': 0,'type': 10},{'expression': f"\'{parameters['Datadepublicacao']}\'",'length': 0,'name': 'data_publicacao','precision': 0,'type': 14}],
+            'FIELDS_MAPPING': [{
+                'expression': 'now()',
+                'length': 0,
+                'name': 'inicio_objeto',
+                'precision': 0,
+                'type': 16
+            },{
+                'expression': ' left(\"Dicofre\",2)',
+                'length': 255,
+                'name': 'di',
+                'precision': 0,
+                'type': 10
+            },{
+                'expression': '\"Distrito\"',
+                'length': 255,
+                'name': 'nome',
+                'precision': 0,
+                'type': 10
+            },{
+                'expression': f"\'{parameters['Datadepublicacao']}\'",
+                'length': 0,
+                'name': 'data_publicacao',
+                'precision': 0,
+                'type': 14
+            }],
             'INPUT': outputs['ExtractByExpression_distritos']['OUTPUT'],
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
         }
@@ -196,7 +244,31 @@ class ExportarUnidadesAdministrativas(QgsProcessingAlgorithm):
 
         # Refactor fields
         alg_params = {
-            'FIELDS_MAPPING': [{'expression': 'now()','length': 0,'name': 'inicio_objeto','precision': 0,'type': 16},{'expression': ' left(\"Dicofre\",4)','length': 255,'name': 'dico','precision': 0,'type': 10},{'expression': '\"Concelho\"','length': 255,'name': 'nome','precision': 0,'type': 10},{'expression': f"\'{parameters['Datadepublicacao']}\'",'length': 0,'name': 'data_publicacao','precision': 0,'type': 14}],
+            'FIELDS_MAPPING': [{
+                'expression': 'now()',
+                'length': 0,
+                'name': 'inicio_objeto',
+                'precision': 0,
+                'type': 16
+            },{
+                'expression': ' left(\"Dicofre\",4)',
+                'length': 255,
+                'name': 'dico',
+                'precision': 0,
+                'type': 10
+            },{
+                'expression': '\"Concelho\"',
+                'length': 255,
+                'name': 'nome',
+                'precision': 0,
+                'type': 10
+            },{
+                'expression': f"\'{parameters['Datadepublicacao']}\'",
+                'length': 0,
+                'name': 'data_publicacao',
+                'precision': 0,
+                'type': 14
+            }],
             'INPUT': outputs['ExtractByExpression_concelhos']['OUTPUT'],
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
         }
@@ -299,7 +371,7 @@ class ExportarUnidadesAdministrativas(QgsProcessingAlgorithm):
         return '01 - Unidades Administrativas'
 
     def groupId(self):
-        return '01 - Unidades Administrativas'
+        return '01UnidadesAdministrativas'
 
     def createInstance(self):
         return ExportarUnidadesAdministrativas()
