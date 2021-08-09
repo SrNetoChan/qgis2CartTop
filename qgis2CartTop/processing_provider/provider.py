@@ -20,7 +20,12 @@ from .exportar_nascente import ExportarNascente
 from .exportar_no_hidrografico import ExportarNoHidrografico
 from .exportar_queda_de_agua import ExportarQuedaDeAgua
 from .exportar_zona_humida import ExportarZonaHumida
-
+from .exportar_area_infra_trans_aereo import ExportarAreaInfraTransAereo
+from .exportar_infra_trans_aereo import ExportarInfraTransAereo
+from .exportar_area_infra_trans_ferrov import ExportarAreaInfraTransFerrov
+from .exportar_infra_trans_ferrov import ExportarInfraTransFerrov
+from .exportar_no_trans_ferrov import ExportarNoTransFerrov
+from .exportar_seg_via_ferrea import ExportarSegViaFerrea
 
 
 class Provider(QgsProcessingProvider):
@@ -47,6 +52,12 @@ class Provider(QgsProcessingProvider):
         self.addAlgorithm(ExportarNoHidrografico())
         self.addAlgorithm(ExportarQuedaDeAgua())
         self.addAlgorithm(ExportarZonaHumida())
+        self.addAlgorithm(ExportarAreaInfraTransAereo())
+        self.addAlgorithm(ExportarInfraTransAereo())
+        self.addAlgorithm(ExportarAreaInfraTransFerrov())
+        self.addAlgorithm(ExportarInfraTransFerrov())
+        self.addAlgorithm(ExportarNoTransFerrov())
+        self.addAlgorithm(ExportarSegViaFerrea())
         # add additional algorithms here
         # self.addAlgorithm(MyOtherAlgorithm())
 
