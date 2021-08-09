@@ -12,6 +12,8 @@ from .exportar_mobiliario_urbano_sinal import Exportar_mob_urbano_sinal
 from .exportar_unidades_administrativas import ExportarUnidadesAdministrativas
 from .exportar_fronteira import ExportarFronteira
 from .exportar_agua_lentica import ExportarAguaLentica
+from .exportar_barreira import ExportarBarreira
+from .exportar_curso_de_agua_area import ExportarCursoDeAguaArea
 
 
 
@@ -31,6 +33,8 @@ class Provider(QgsProcessingProvider):
         self.addAlgorithm(ExportarUnidadesAdministrativas())
         self.addAlgorithm(ExportarFronteira())
         self.addAlgorithm(ExportarAguaLentica())
+        self.addAlgorithm(ExportarBarreira())
+        self.addAlgorithm(ExportarCursoDeAguaArea())
         # add additional algorithms here
         # self.addAlgorithm(MyOtherAlgorithm())
 
