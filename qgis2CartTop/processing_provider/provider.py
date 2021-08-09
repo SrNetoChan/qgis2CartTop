@@ -26,7 +26,10 @@ from .exportar_area_infra_trans_ferrov import ExportarAreaInfraTransFerrov
 from .exportar_infra_trans_ferrov import ExportarInfraTransFerrov
 from .exportar_no_trans_ferrov import ExportarNoTransFerrov
 from .exportar_seg_via_ferrea import ExportarSegViaFerrea
-
+from .exportar_area_infra_trans_cabo import ExportarAreaInfraTransCabo
+from .exportar_seg_via_cabo import ExportarSegViaCabo
+from .exportar_area_infra_trans_via_navegavel import ExportarAreaInfraTransViaNavegavel
+from .exportar_infra_trans_via_navegavel import ExportarInfraTransViaNavegavel
 
 class Provider(QgsProcessingProvider):
 
@@ -58,6 +61,10 @@ class Provider(QgsProcessingProvider):
         self.addAlgorithm(ExportarInfraTransFerrov())
         self.addAlgorithm(ExportarNoTransFerrov())
         self.addAlgorithm(ExportarSegViaFerrea())
+        self.addAlgorithm(ExportarAreaInfraTransCabo())
+        self.addAlgorithm(ExportarSegViaCabo())
+        self.addAlgorithm(ExportarAreaInfraTransViaNavegavel())
+        self.addAlgorithm(ExportarInfraTransViaNavegavel())
         # add additional algorithms here
         # self.addAlgorithm(MyOtherAlgorithm())
 
