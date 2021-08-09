@@ -6,13 +6,15 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterEnum,
                        QgsProcessingParameterProviderConnection,
                        QgsProcessingParameterString,
+                       QgsProcessingParameterNumber,
                        QgsProperty,
                        QgsProcessingParameterBoolean)
+
 import processing
 from .utils import get_lista_codigos
 
 
-class ExportarFronteira(QgsProcessingAlgorithm):
+class ExportarAguaLentica(QgsProcessingAlgorithm):
 
     # Constants used to refer to parameters and outputs. They will be
     # used when calling the algorithm from another algorithm, or when
@@ -20,9 +22,9 @@ class ExportarFronteira(QgsProcessingAlgorithm):
 
     LIGACAO_RECART = 'LIGACAO_RECART'
     INPUT = 'INPUT'
-    VALOR_ESTADO_FRONTEIRA = 'VALOR_ESTADO_FRONTEIRA'
-    DATA_PUBLICACAO = 'DATA_PUBLICACAO'
-
+    VALOR_AGUA_LENTICA = 'VALOR_AGUA_LENTICA'
+    COTA_PLENO_ARMAZENAMENTO = 'COTA_PLENO_ARMAZENAMENTO'
+    MARE = 'MARE'
 
     def initAlgorithm(self, config=None):
         self.addParameter(
@@ -34,35 +36,47 @@ class ExportarFronteira(QgsProcessingAlgorithm):
             )
         )
 
-        self.addParameter(
+        input_layer = self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.INPUT,
                 self.tr('Input line layer'),
-                types=[QgsProcessing.TypeVectorLine],
+                types=[QgsProcessing.TypeVectorPolygon],
                 defaultValue=None
             )
         )
 
-        self.vef_keys, self.vef_values = get_lista_codigos('valorEstadoFronteira')
-
+        self.val_keys, self.val_values = get_lista_codigos('valorAguaLentica')
         self.addParameter(
             QgsProcessingParameterEnum(
-                self.VALOR_ESTADO_FRONTEIRA,
-                self.tr('Valor Estado Fronteira'),
-                self.vef_keys,
+                self.VALOR_AGUA_LENTICA,
+                self.tr('Valor Agua Lentica'),
+                self.val_keys,
                 defaultValue=0,
                 optional=False,
             )
         )
 
+
         self.addParameter(
-            QgsProcessingParameterString(
-                self.DATA_PUBLICACAO, 
-                'Data de publicação',
-                multiLine=False, 
-                defaultValue='2021-02-05'
+            QgsProcessingParameterBoolean(
+                self.COTA_PLENO_ARMAZENAMENTO,
+                self.tr('Cota Pleno Armazenamento'),
+                defaultValue=0,
+                optional=False,
             )
         )
+
+
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.MARE,
+                self.tr('Mare'),
+                defaultValue=0,
+                optional=False,
+            )
+        )
+
+
 
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
@@ -72,10 +86,10 @@ class ExportarFronteira(QgsProcessingAlgorithm):
         outputs = {}
 
         # Convert enumerator to actual value
-        valor_estado_fronteira = self.vef_values[
+        valor_agua_lentica = self.val_values[
             self.parameterAsEnum(
                 parameters,
-                self.VALOR_ESTADO_FRONTEIRA,
+                self.VALOR_AGUA_LENTICA,
                 context
                 )
             ]
@@ -88,18 +102,25 @@ class ExportarFronteira(QgsProcessingAlgorithm):
                 'name': 'inicio_objeto',
                 'precision': -1,
                 'type': 14
+   
             },{
-                'expression': valor_estado_fronteira,
+                'expression': valor_agua_lentica,
                 'length': 255,
-                'name': 'valor_estado_fronteira',
+                'name': 'valor_agua_lentica',
                 'precision': -1,
-                'type': 10
+                'type': 10   
             },{
-                'expression': f"\'{parameters['DATA_PUBLICACAO']}\'",
+                'expression': f"\'{parameters['COTA_PLENO_ARMAZENAMENTO']}\'",
                 'length': 255,
-                'name': 'data_publicacao',
-                'precision': 0,
-                'type': 14
+                'name': 'cota_plena_armazenamento',
+                'precision': -1,
+                'type': 1   
+            },{
+                'expression': f"{parameters['MARE']}",
+                'length': 255,
+                'name': 'mare',
+                'precision': -1,
+                'type': 1
             }],
             'INPUT': parameters['INPUT'],
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
@@ -111,24 +132,24 @@ class ExportarFronteira(QgsProcessingAlgorithm):
             return {}
 
         alg_params = {
-            'ADDFIELDS': True,
+            'ADDFIELDS': False,
             'APPEND': True,
             'A_SRS': None,
             'CLIP': False,
             'DATABASE': parameters[self.LIGACAO_RECART],
-            'DIM': 0,
+            'DIM': 1,
             'GEOCOLUMN': 'geometria',
             'GT': '',
-            'GTYPE': 4,
-            'INDEX': True,
+            'GTYPE': 0,
+            'INDEX': False,
             'INPUT': outputs['RefactorFields']['OUTPUT'],
-            'LAUNDER': True,
+            'LAUNDER': False,
             'OPTIONS': '',
             'OVERWRITE': False,
             'PK': '',
             'PRECISION': True,
             'PRIMARY_KEY': 'identificador',
-            'PROMOTETOMULTI': True,
+            'PROMOTETOMULTI': False,
             'SCHEMA': 'public',
             'SEGMENTIZE': '',
             'SHAPE_ENCODING': '',
@@ -136,7 +157,7 @@ class ExportarFronteira(QgsProcessingAlgorithm):
             'SKIPFAILURES': False,
             'SPAT': None,
             'S_SRS': None,
-            'TABLE': 'fronteira',
+            'TABLE': 'agua_lentica',
             'T_SRS': None,
             'WHERE': ''
         }
@@ -144,19 +165,19 @@ class ExportarFronteira(QgsProcessingAlgorithm):
         return results
 
     def name(self):
-        return 'exportar_fronteira'
+        return 'Exportar Agua Lentica'
 
     def displayName(self):
-        return '04. Exportar fronteira'
+        return '01. Agua Lêntica'
 
     def group(self):
-        return '01 - Unidades Administrativas'
+        return '04 - Hidrografia'
 
     def groupId(self):
-        return '01UnidadesAdministrativas'
+        return '04Hidrografia'
 
     def createInstance(self):
-        return ExportarFronteira()
+        return ExportarAguaLentica()
 
     def tr(self, string):
         """
@@ -165,8 +186,8 @@ class ExportarFronteira(QgsProcessingAlgorithm):
         return QCoreApplication.translate('Processing', string)
 
     def shortHelpString(self):
-        return self.tr("Exporta elementos do tipo fronteira para a base " \
+        return self.tr("Exporta elementos do tipo Agua Lentica para a base " \
                        "de dados RECART usando uma ligação PostgreSQL/PostGIS " \
                        "já configurada.\n\n" \
-                       "A camada vectorial de input deve ser do tipo linha 2D."
+                       "A camada vectorial de input deve ser do tipo polígono 3D."
         )

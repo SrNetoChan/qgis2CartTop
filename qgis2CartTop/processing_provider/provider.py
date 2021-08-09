@@ -1,5 +1,4 @@
 from qgis.core import QgsProcessingProvider
-
 from .example_processing_algorithm import ExampleProcessingAlgorithm
 from .exportar_curvas_de_nivel import Exportar_curvas_de_nivel
 from .exportar_pontos_cotados import Exportar_pontos_cotados
@@ -12,6 +11,7 @@ from .exportar_designacao_local import Exportar_designacao_local
 from .exportar_mobiliario_urbano_sinal import Exportar_mob_urbano_sinal
 from .exportar_unidades_administrativas import ExportarUnidadesAdministrativas
 from .exportar_fronteira import ExportarFronteira
+from .exportar_agua_lentica import ExportarAguaLentica
 
 
 
@@ -30,6 +30,7 @@ class Provider(QgsProcessingProvider):
         self.addAlgorithm(Exportar_mob_urbano_sinal())
         self.addAlgorithm(ExportarUnidadesAdministrativas())
         self.addAlgorithm(ExportarFronteira())
+        self.addAlgorithm(ExportarAguaLentica())
         # add additional algorithms here
         # self.addAlgorithm(MyOtherAlgorithm())
 
