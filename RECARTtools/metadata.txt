@@ -1,14 +1,14 @@
 [general]
-name=qgis2carttop
-description=QGIS plugin for easy export data into a CartTopV1 data base.
+name=RECART Tools
+description=QGIS plugin containing tools for easy export data into a CartTopV1/RECART data base.
 about=QGIS Plugin to help exporting data into a PostgreSQL/PostGIS database
-      following the sata model defined by "Normas e Especificações Técnicas
+      following the data model defined by "Normas e Especificações Técnicas
       para a Cartografia Vectoria e de Imagem" (CartTop / ReCart) from
       Direcção-Geral do Território (Portugal).
 version=0.1
 qgisMinimumVersion=3.0
-author=Alexandre Neto
-email=senhor.neto@gmail.com
+author=Alexandre Neto (NaturalGIS) co-funded by (ArTop)
+email=alexandre.neto@naturalgis.pt
 repository=https://github.com/SrNetoChan/qgis2CartTop
 experimental=True
 hasProcessingProvider=yes
