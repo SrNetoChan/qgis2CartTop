@@ -131,10 +131,10 @@ class ExportarBarreira(QgsProcessingAlgorithm):
         return results
 
     def name(self):
-        return 'Exportar Barreira'
+        return 'exportar_barreira'
 
     def displayName(self):
-        return '02. Barreira'
+        return '02. Exportar Barreira'
 
     def group(self):
         return '04 - Hidrografia'

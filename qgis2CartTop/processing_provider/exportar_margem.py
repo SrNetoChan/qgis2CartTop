@@ -14,7 +14,7 @@ import processing
 from .utils import get_lista_codigos
 
 
-class ExportarAguaLentica(QgsProcessingAlgorithm):
+class ExportarMargem(QgsProcessingAlgorithm):
 
     # Constants used to refer to parameters and outputs. They will be
     # used when calling the algorithm from another algorithm, or when
@@ -22,9 +22,7 @@ class ExportarAguaLentica(QgsProcessingAlgorithm):
 
     LIGACAO_RECART = 'LIGACAO_RECART'
     INPUT = 'INPUT'
-    VALOR_AGUA_LENTICA = 'VALOR_AGUA_LENTICA'
-    COTA_PLENO_ARMAZENAMENTO = 'COTA_PLENO_ARMAZENAMENTO'
-    MARE = 'MARE'
+    VALOR_TIPO_MARGEM = 'VALOR_TIPO_MARGEM'
 
     def initAlgorithm(self, config=None):
         self.addParameter(
@@ -39,38 +37,18 @@ class ExportarAguaLentica(QgsProcessingAlgorithm):
         input_layer = self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.INPUT,
-                self.tr('Input line layer'),
+                self.tr(' Camada de polígono de entrada'),
                 types=[QgsProcessing.TypeVectorPolygon],
                 defaultValue=None
             )
         )
 
-        self.val_keys, self.val_values = get_lista_codigos('valorAguaLentica')
+        self.vtm_keys, self.vtm_values = get_lista_codigos('valorTipoMargem')
         self.addParameter(
             QgsProcessingParameterEnum(
-                self.VALOR_AGUA_LENTICA,
-                self.tr('Valor Agua Lentica'),
-                self.val_keys,
-                defaultValue=0,
-                optional=False,
-            )
-        )
-
-
-        self.addParameter(
-            QgsProcessingParameterBoolean(
-                self.COTA_PLENO_ARMAZENAMENTO,
-                self.tr('Cota Pleno Armazenamento'),
-                defaultValue=0,
-                optional=False,
-            )
-        )
-
-
-        self.addParameter(
-            QgsProcessingParameterBoolean(
-                self.MARE,
-                self.tr('Mare'),
+                self.VALOR_TIPO_MARGEM,
+                self.tr('Valor Tipo Margem'),
+                self.vtm_keys,
                 defaultValue=0,
                 optional=False,
             )
@@ -86,10 +64,10 @@ class ExportarAguaLentica(QgsProcessingAlgorithm):
         outputs = {}
 
         # Convert enumerator to actual value
-        valor_agua_lentica = self.val_values[
+        valor_tipo_margem = self.vtm_values[
             self.parameterAsEnum(
                 parameters,
-                self.VALOR_AGUA_LENTICA,
+                self.VALOR_TIPO_MARGEM,
                 context
                 )
             ]
@@ -104,23 +82,11 @@ class ExportarAguaLentica(QgsProcessingAlgorithm):
                 'type': 14
    
             },{
-                'expression': valor_agua_lentica,
+                'expression': valor_tipo_margem,
                 'length': 255,
-                'name': 'valor_agua_lentica',
+                'name': 'valor_tipo_margem',
                 'precision': -1,
-                'type': 10   
-            },{
-                'expression': f"\'{parameters['COTA_PLENO_ARMAZENAMENTO']}\'",
-                'length': 255,
-                'name': 'cota_plena_armazenamento',
-                'precision': -1,
-                'type': 1   
-            },{
-                'expression': f"{parameters['MARE']}",
-                'length': 255,
-                'name': 'mare',
-                'precision': -1,
-                'type': 1
+                'type': 10
             }],
             'INPUT': parameters['INPUT'],
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
@@ -137,7 +103,7 @@ class ExportarAguaLentica(QgsProcessingAlgorithm):
             'A_SRS': None,
             'CLIP': False,
             'DATABASE': parameters[self.LIGACAO_RECART],
-            'DIM': 1,
+            'DIM': 0,
             'GEOCOLUMN': 'geometria',
             'GT': '',
             'GTYPE': 0,
@@ -157,7 +123,7 @@ class ExportarAguaLentica(QgsProcessingAlgorithm):
             'SKIPFAILURES': False,
             'SPAT': None,
             'S_SRS': None,
-            'TABLE': 'agua_lentica',
+            'TABLE': 'margem',
             'T_SRS': None,
             'WHERE': ''
         }
@@ -165,10 +131,10 @@ class ExportarAguaLentica(QgsProcessingAlgorithm):
         return results
 
     def name(self):
-        return 'exportar_agua_lentica'
+        return 'exportar_margem'
 
     def displayName(self):
-        return '01. Exportar Água Lêntica'
+        return '06. Exportar Margem'
 
     def group(self):
         return '04 - Hidrografia'
@@ -177,7 +143,7 @@ class ExportarAguaLentica(QgsProcessingAlgorithm):
         return '04Hidrografia'
 
     def createInstance(self):
-        return ExportarAguaLentica()
+        return ExportarMargem()
 
     def tr(self, string):
         """
@@ -186,8 +152,8 @@ class ExportarAguaLentica(QgsProcessingAlgorithm):
         return QCoreApplication.translate('Processing', string)
 
     def shortHelpString(self):
-        return self.tr("Exporta elementos do tipo Agua Lentica para a base " \
+        return self.tr("Exporta elementos do tipo Margem para a base " \
                        "de dados RECART usando uma ligação PostgreSQL/PostGIS " \
                        "já configurada.\n\n" \
-                       "A camada vectorial de input deve ser do tipo polígono 3D."
+                       "A camada vectorial de input deve ser do tipo polígono 2D."
         )
