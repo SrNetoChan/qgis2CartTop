@@ -7,7 +7,7 @@ about=QGIS Plugin to help exporting data into a PostgreSQL/PostGIS database
       Direcção-Geral do Território (Portugal).
 version=0.1
 qgisMinimumVersion=3.0
-author=Alexandre Neto (NaturalGIS) co-funded by (ArTop)
+author=Alexandre Neto (NaturalGIS) co-funded by (Inforgeo, ArTop)
 email=alexandre.neto@naturalgis.pt
 repository=https://github.com/SrNetoChan/qgis2CartTop
 experimental=True
