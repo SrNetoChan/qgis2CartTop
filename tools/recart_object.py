@@ -218,7 +218,7 @@ def main():
         tool_code = code_template.render(
             nome_ferramenta = o.name,
             table = convert(o.name),
-            display_name = convert(o.name).replace('_',' ').title(),
+            display_name = o.long_name,
             tema = o.theme.title(),
             numero_tema = numero_tema,
             geometria = geometria,
