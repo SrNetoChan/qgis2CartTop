@@ -56,12 +56,13 @@ class ExportarAreaTrabalho(QgsProcessingAlgorithm):
             )
         )
 
-
+        self.nivel_de_detalhe_values = ['NdD1','NdD2']
         self.addParameter(
-            QgsProcessingParameterString(
+            QgsProcessingParameterEnum(
                 self.NIVEL_DE_DETALHE,
                 self.tr('Nivel De Detalhe'),
-                defaultValue='',
+                options=self.nivel_de_detalhe_values,
+                defaultValue=0,
                 optional=False,
             )
         )
@@ -105,6 +106,15 @@ class ExportarAreaTrabalho(QgsProcessingAlgorithm):
         results = {}
         outputs = {}
 
+        # Convert enumerator to actual value
+        nivel_de_detalhe = self.nivel_de_detalhe_values[
+            self.parameterAsEnum(
+                parameters,
+                self.NIVEL_DE_DETALHE,
+                context
+                )
+            ]
+
 
         # Refactor fields
         alg_params = {
@@ -122,7 +132,7 @@ class ExportarAreaTrabalho(QgsProcessingAlgorithm):
                 'precision': -1,
                 'type': 14   
             },{
-                'expression': f"\'{parameters['NIVEL_DE_DETALHE']}\'",
+                'expression': f"\'{nivel_de_detalhe}\'",
                 'length': 255,
                 'name': 'nivel_de_detalhe',
                 'precision': -1,
