@@ -36,6 +36,10 @@ from .exportar_no_trans_rodov import ExportarNoTransRodov
 from .exportar_seg_via_rodov import ExportarSegViaRodov
 from .exportar_via_rodov_limite import ExportarViaRodovLimite
 from .exportar_obra_arte import ExportarObraArte
+from .exportar_constru_polig import ExportarConstruPolig
+from .exportar_edificio import ExportarEdificio
+from .exportar_ponto_interesse import ExportarPontoInteresse
+from .exportar_sinal_geodesico import ExportarSinalGeodesico
 
 class Provider(QgsProcessingProvider):
 
@@ -77,6 +81,10 @@ class Provider(QgsProcessingProvider):
         self.addAlgorithm(ExportarSegViaRodov())
         self.addAlgorithm(ExportarViaRodovLimite())
         self.addAlgorithm(ExportarObraArte())
+        self.addAlgorithm(ExportarConstruPolig())
+        self.addAlgorithm(ExportarEdificio())
+        self.addAlgorithm(ExportarPontoInteresse())
+        self.addAlgorithm(ExportarSinalGeodesico())
         # add additional algorithms here
         # self.addAlgorithm(MyOtherAlgorithm())
 

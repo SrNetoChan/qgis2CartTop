@@ -4,103 +4,123 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingMultiStepFeedback,
                        QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterEnum,
+                       QgsProcessingParameterProviderConnection,
                        QgsProcessingParameterString,
+                       QgsProcessingParameterNumber,
                        QgsProperty,
                        QgsProcessingParameterBoolean)
+
 import processing
-from .utils import get_postgres_connections, get_lista_codigos
+from .utils import get_lista_codigos
 
 
-class Exportar_construcao_linear(QgsProcessingAlgorithm):
+class ExportarSinalGeodesico(QgsProcessingAlgorithm):
 
     # Constants used to refer to parameters and outputs. They will be
     # used when calling the algorithm from another algorithm, or when
     # calling from the QGIS console.
 
+    LIGACAO_RECART = 'LIGACAO_RECART'
     INPUT = 'INPUT'
-    VALOR_CONSTRUCAO_LINEAR = 'VALOR_CONSTRUCAO_LINEAR'
-    LARGURA = 'LARGURA'
-    NOME = 'NOME'
-    SUPORTE = 'SUPORTE'
-    POSTGRES_CONNECTION = 'POSTGRES_CONNECTION'
-
+    VALOR_LOCAL_GEODESICO = 'VALOR_LOCAL_GEODESICO'
+    VALOR_ORDEM = 'VALOR_ORDEM'
+    VALOR_TIPO_SINAL_GEODESICO = 'VALOR_TIPO_SINAL_GEODESICO'
+    DATA_REVISAO = 'DATA_REVISAO'
 
     def initAlgorithm(self, config=None):
-        self.postgres_connections_list = get_postgres_connections()
-
         self.addParameter(
-            QgsProcessingParameterEnum(
-                self.POSTGRES_CONNECTION,
-                self.tr('Ligação PostgreSQL'),
-                self.postgres_connections_list,
-                defaultValue = 0
-            )
-        )
-
-        self.addParameter(
-            QgsProcessingParameterFeatureSource(
-                self.INPUT,
-                self.tr('Input line layer (2D)'),
-                types=[QgsProcessing.TypeVectorLine],
+            QgsProcessingParameterProviderConnection(
+                self.LIGACAO_RECART,
+                'Ligação PostgreSQL',
+                'postgres',
                 defaultValue=None
             )
         )
 
-        self.vcl_keys, self.vcl_values = get_lista_codigos('valorConstrucaoLinear')
+        input_layer = self.addParameter(
+            QgsProcessingParameterFeatureSource(
+                self.INPUT,
+                self.tr(' Camada de ponto de entrada'),
+                types=[QgsProcessing.TypeVectorPoint],
+                defaultValue=None
+            )
+        )
 
+        self.vlg_keys, self.vlg_values = get_lista_codigos('valorLocalGeodesico')
         self.addParameter(
             QgsProcessingParameterEnum(
-                self.VALOR_CONSTRUCAO_LINEAR,
-                self.tr('Valor Construcao Linear'),
-                self.vcl_keys,
+                self.VALOR_LOCAL_GEODESICO,
+                self.tr('Valor Local Geodesico'),
+                self.vlg_keys,
                 defaultValue=0,
                 optional=False,
             )
         )
 
-        self.addParameter(
-            QgsProcessingParameterString(
-                self.LARGURA,
-                self.tr('largura'),
-                defaultValue=None,
-                optional=True,
-            )
-        )
 
+        self.vo_keys, self.vo_values = get_lista_codigos('valorOrdem')
         self.addParameter(
-            QgsProcessingParameterString(
-                self.NOME,
-                self.tr('nome'),
-                defaultValue=None,
-                optional=True,
-            )
-        )
-
-        self.addParameter(
-            QgsProcessingParameterBoolean(
-                self.SUPORTE,
-                self.tr('suporte'),
+            QgsProcessingParameterEnum(
+                self.VALOR_ORDEM,
+                self.tr('Valor Ordem'),
+                self.vo_keys,
                 defaultValue=0,
                 optional=False,
             )
         )
 
+
+        self.vtsg_keys, self.vtsg_values = get_lista_codigos('valorTipoSinalGeodesico')
+        self.addParameter(
+            QgsProcessingParameterEnum(
+                self.VALOR_TIPO_SINAL_GEODESICO,
+                self.tr('Valor Tipo Sinal Geodesico'),
+                self.vtsg_keys,
+                defaultValue=0,
+                optional=False,
+            )
+        )
+
+
+        self.addParameter(
+            QgsProcessingParameterString(
+                self.DATA_REVISAO,
+                self.tr('Data Revisao'),
+                defaultValue='1900-01-01',
+                optional=False,
+            )
+        )
 
 
 
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
         # overall progress through the model
-        feedback = QgsProcessingMultiStepFeedback(3, model_feedback)
-
+        feedback = QgsProcessingMultiStepFeedback(2, model_feedback)
         results = {}
         outputs = {}
 
-        # Convert enumerator(s) to actual values
-        valor_construcao_linear = self.vcl_values[
+        # Convert enumerator to actual value
+        valor_local_geodesico = self.vlg_values[
             self.parameterAsEnum(
                 parameters,
-                self.VALOR_CONSTRUCAO_LINEAR,
+                self.VALOR_LOCAL_GEODESICO,
+                context
+                )
+            ]
+        # Convert enumerator to actual value
+        valor_ordem = self.vo_values[
+            self.parameterAsEnum(
+                parameters,
+                self.VALOR_ORDEM,
+                context
+                )
+            ]
+        # Convert enumerator to actual value
+        valor_tipo_sinal_geodesico = self.vtsg_values[
+            self.parameterAsEnum(
+                parameters,
+                self.VALOR_TIPO_SINAL_GEODESICO,
                 context
                 )
             ]
@@ -113,83 +133,60 @@ class Exportar_construcao_linear(QgsProcessingAlgorithm):
                 'name': 'inicio_objeto',
                 'precision': -1,
                 'type': 14
-            }, {
-                'expression': valor_construcao_linear,
+   
+            },{
+                'expression': valor_local_geodesico,
                 'length': 255,
-                'name': 'valor_construcao_linear',
+                'name': 'valor_local_geodesico',
                 'precision': -1,
-                'type': 10
-            }, {
-                'expression': str(parameters['NOME']),
+                'type': 10   
+            },{
+                'expression': valor_ordem,
                 'length': 255,
-                'name': 'nome',
+                'name': 'valor_ordem',
                 'precision': -1,
-                'type': 10
-            }, {
-                'expression': str(parameters['SUPORTE']),
-                'length': -1,
-                'name': 'suporte',
+                'type': 10   
+            },{
+                'expression': valor_tipo_sinal_geodesico,
+                'length': 255,
+                'name': 'valor_tipo_sinal_geodesico',
                 'precision': -1,
-                'type': 1
-            }, {
-                'expression': parameters['LARGURA'],
-                'length': -1,
-                'name': 'largura',
+                'type': 10   
+            },{
+                'expression': f"\'{parameters['DATA_REVISAO']}\'",
+                'length': 255,
+                'name': 'data_revisao',
                 'precision': -1,
-                'type': 6
+                'type': 14
             }],
             'INPUT': parameters['INPUT'],
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
         }
-
         outputs['RefactorFields'] = processing.run('qgis:refactorfields', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
 
         feedback.setCurrentStep(1)
         if feedback.isCanceled():
             return {}
 
-        # Sanitize Z and M values from 3D Layers
-        # Input table only accepts 2D
         alg_params = {
-            'DROP_M_VALUES': True,
-            'DROP_Z_VALUES': True,
-            'INPUT': outputs['RefactorFields']['OUTPUT'],
-            'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
-        }
-        outputs['DropMzValues'] = processing.run('native:dropmzvalues', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
-
-        feedback.setCurrentStep(2)
-        if feedback.isCanceled():
-            return {}
-
-        # Export to PostgreSQL (available connections)
-        idx = self.parameterAsEnum(
-            parameters,
-            self.POSTGRES_CONNECTION,
-            context
-            )
-
-        postgres_connection = self.postgres_connections_list[idx]
-
-        alg_params = {
-            'ADDFIELDS': True,
+            'ADDFIELDS': False,
             'APPEND': True,
             'A_SRS': None,
             'CLIP': False,
-            'DATABASE': postgres_connection,
+            'DATABASE': parameters[self.LIGACAO_RECART],
             'DIM': 1,
             'GEOCOLUMN': 'geometria',
             'GT': '',
-            'GTYPE': 4,
-            'INDEX': True,
-            'INPUT': outputs['DropMzValues']['OUTPUT'],
-            'LAUNDER': True,
+            'GTYPE': 0,
+            'INDEX': False,
+            'INPUT': outputs['RefactorFields']['OUTPUT'],
+            'LAUNDER': False,
             'OPTIONS': '',
             'OVERWRITE': False,
             'PK': '',
             'PRECISION': True,
             'PRIMARY_KEY': 'identificador',
-            'PROMOTETOMULTI': True,
+            'PROMOTETOMULTI': False,
             'SCHEMA': 'public',
             'SEGMENTIZE': '',
             'SHAPE_ENCODING': '',
@@ -197,7 +194,7 @@ class Exportar_construcao_linear(QgsProcessingAlgorithm):
             'SKIPFAILURES': False,
             'SPAT': None,
             'S_SRS': None,
-            'TABLE': 'constru_linear',
+            'TABLE': 'sinal_geodesico',
             'T_SRS': None,
             'WHERE': ''
         }
@@ -205,10 +202,10 @@ class Exportar_construcao_linear(QgsProcessingAlgorithm):
         return results
 
     def name(self):
-        return 'exportar_construcao_linear'
+        return 'exportar_sinal_geodesico'
 
     def displayName(self):
-        return '01. Exportar construção linear'
+        return '05. Exportar Sinal geodésico'
 
     def group(self):
         return '06 - Construções'
@@ -217,7 +214,7 @@ class Exportar_construcao_linear(QgsProcessingAlgorithm):
         return '06Construcoes'
 
     def createInstance(self):
-        return Exportar_construcao_linear()
+        return ExportarSinalGeodesico()
 
     def tr(self, string):
         """
@@ -226,8 +223,8 @@ class Exportar_construcao_linear(QgsProcessingAlgorithm):
         return QCoreApplication.translate('Processing', string)
 
     def shortHelpString(self):
-        return self.tr("Exporta elementos do tipo construcao linear para a base " \
+        return self.tr("Exporta elementos do tipo Sinal geodésico para a base " \
                        "de dados RECART usando uma ligação PostgreSQL/PostGIS " \
                        "já configurada.\n\n" \
-                       "A camada vectorial de input deve ser do tipo linha 2D.\n\n" \
-                       "Camadas 3D irão perder os valores de Z.")
+                       "A camada vectorial de input deve ser do tipo ponto 3D."
+        )
