@@ -40,7 +40,8 @@ from .exportar_constru_polig import ExportarConstruPolig
 from .exportar_edificio import ExportarEdificio
 from .exportar_ponto_interesse import ExportarPontoInteresse
 from .exportar_sinal_geodesico import ExportarSinalGeodesico
-
+from .exportar_area_agricola_florestal_mato import ExportarAreaAgricolaFlorestalMato
+from .exportar_areas_artificializadas import ExportarAreasArtificializadas
 class Provider(QgsProcessingProvider):
 
     def loadAlgorithms(self, *args, **kwargs):
@@ -85,6 +86,8 @@ class Provider(QgsProcessingProvider):
         self.addAlgorithm(ExportarEdificio())
         self.addAlgorithm(ExportarPontoInteresse())
         self.addAlgorithm(ExportarSinalGeodesico())
+        self.addAlgorithm(ExportarAreaAgricolaFlorestalMato())
+        self.addAlgorithm(ExportarAreasArtificializadas())
         # add additional algorithms here
         # self.addAlgorithm(MyOtherAlgorithm())
 
