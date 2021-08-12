@@ -4,55 +4,57 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingMultiStepFeedback,
                        QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterEnum,
+                       QgsProcessingParameterProviderConnection,
+                       QgsProcessingParameterString,
+                       QgsProcessingParameterNumber,
                        QgsProperty,
                        QgsProcessingParameterBoolean)
+
 import processing
-from .utils import get_postgres_connections, get_lista_codigos
+from .utils import get_lista_codigos
 
 
-class Exportar_mob_urbano_sinal(QgsProcessingAlgorithm):
+class ExportarMobUrbanoSinal(QgsProcessingAlgorithm):
 
     # Constants used to refer to parameters and outputs. They will be
     # used when calling the algorithm from another algorithm, or when
     # calling from the QGIS console.
 
+    LIGACAO_RECART = 'LIGACAO_RECART'
     INPUT = 'INPUT'
-    VALOR_TIPO_MOBURBSINAL = 'VALOR_TIPO_MOBURBSINAL'
-    POSTGRES_CONNECTION = 'POSTGRES_CONNECTION'
-
+    VALOR_TIPO_MOB_URB_SINAL = 'VALOR_TIPO_MOB_URB_SINAL'
 
     def initAlgorithm(self, config=None):
-        self.postgres_connections_list = get_postgres_connections()
-
         self.addParameter(
-            QgsProcessingParameterEnum(
-                self.POSTGRES_CONNECTION,
-                self.tr('Ligação PostgreSQL'),
-                self.postgres_connections_list,
-                defaultValue = 0
+            QgsProcessingParameterProviderConnection(
+                self.LIGACAO_RECART,
+                'Ligação PostgreSQL',
+                'postgres',
+                defaultValue=None
             )
         )
 
-        self.addParameter(
+        input_layer = self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.INPUT,
-                self.tr('Input point/polygon layer (2D)'),
-                types=[QgsProcessing.TypeVectorPoint],
+                self.tr(' Camada de ponto ou polígono de entrada'),
+                types=[QgsProcessing.TypeVectorPoint, QgsProcessing.TypeVectorPolygon],
                 defaultValue=None
             )
         )
 
         self.vtmus_keys, self.vtmus_values = get_lista_codigos('valorTipoMobUrbSinal')
-
         self.addParameter(
             QgsProcessingParameterEnum(
-                self.VALOR_TIPO_MOBURBSINAL,
-                self.tr('valor_tipo_de_mob_urbano_sinal'),
+                self.VALOR_TIPO_MOB_URB_SINAL,
+                self.tr('Valor Tipo Mob Urb Sinal'),
                 self.vtmus_keys,
-                defaultValue=1,
+                defaultValue=0,
                 optional=False,
             )
         )
+
+
 
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
@@ -62,10 +64,10 @@ class Exportar_mob_urbano_sinal(QgsProcessingAlgorithm):
         outputs = {}
 
         # Convert enumerator to actual value
-        valor_tipo_de_mob_urbano_sinal = self.vtmus_values[
+        valor_tipo_mob_urb_sinal = self.vtmus_values[
             self.parameterAsEnum(
                 parameters,
-                self.VALOR_TIPO_MOBURBSINAL,
+                self.VALOR_TIPO_MOB_URB_SINAL,
                 context
                 )
             ]
@@ -78,10 +80,11 @@ class Exportar_mob_urbano_sinal(QgsProcessingAlgorithm):
                 'name': 'inicio_objeto',
                 'precision': -1,
                 'type': 14
+   
             },{
-                'expression': str(valor_tipo_de_mob_urbano_sinal),
+                'expression': valor_tipo_mob_urb_sinal,
                 'length': 255,
-                'name': 'valor_tipo_de_mob_urbano_sinal',
+                'name': 'valor_tipo_mob_urb_sinal',
                 'precision': -1,
                 'type': 10
             }],
@@ -94,34 +97,25 @@ class Exportar_mob_urbano_sinal(QgsProcessingAlgorithm):
         if feedback.isCanceled():
             return {}
 
-        # Export to PostgreSQL (available connections)
-        idx = self.parameterAsEnum(
-            parameters,
-            self.POSTGRES_CONNECTION,
-            context
-            )
-
-        postgres_connection = self.postgres_connections_list[idx]
-
         alg_params = {
-            'ADDFIELDS': True,
+            'ADDFIELDS': False,
             'APPEND': True,
             'A_SRS': None,
             'CLIP': False,
-            'DATABASE': postgres_connection,
+            'DATABASE': parameters[self.LIGACAO_RECART],
             'DIM': 0,
             'GEOCOLUMN': 'geometria',
             'GT': '',
-            'GTYPE': 3,
-            'INDEX': True,
+            'GTYPE': 0,
+            'INDEX': False,
             'INPUT': outputs['RefactorFields']['OUTPUT'],
-            'LAUNDER': True,
+            'LAUNDER': False,
             'OPTIONS': '',
             'OVERWRITE': False,
             'PK': '',
             'PRECISION': True,
             'PRIMARY_KEY': 'identificador',
-            'PROMOTETOMULTI': True,
+            'PROMOTETOMULTI': False,
             'SCHEMA': 'public',
             'SEGMENTIZE': '',
             'SHAPE_ENCODING': '',
@@ -140,16 +134,16 @@ class Exportar_mob_urbano_sinal(QgsProcessingAlgorithm):
         return 'exportar_mob_urbano_sinal'
 
     def displayName(self):
-        return '01. Exportar mobiliário urbano e sinalização'
+        return '01. Exportar Mobiliário Urbano e sinalização'
 
     def group(self):
-        return '09 - Mobiliário urbano e sinalização'
+        return '09 - Mobiliário Urbano E Sinalização'
 
     def groupId(self):
-        return '09mobiliario'
+        return '09MobiliarioUrbanoSinalizacao'
 
     def createInstance(self):
-        return Exportar_mob_urbano_sinal()
+        return ExportarMobUrbanoSinal()
 
     def tr(self, string):
         """
@@ -158,8 +152,8 @@ class Exportar_mob_urbano_sinal(QgsProcessingAlgorithm):
         return QCoreApplication.translate('Processing', string)
 
     def shortHelpString(self):
-        return self.tr("Exporta elementos do tipo mobiliário urbano e sinalização para a base " \
+        return self.tr("Exporta elementos do tipo Mobiliário Urbano e sinalização para a base " \
                        "de dados RECART usando uma ligação PostgreSQL/PostGIS " \
                        "já configurada.\n\n" \
-                       "A camada vectorial de input deve ser do tipo ponto 2D."
+                       "A camada vectorial de input deve ser do tipo ponto ou polígono 2D."
         )

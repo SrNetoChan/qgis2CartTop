@@ -7,7 +7,6 @@ from .exportar_elemento_associado_de_eletricidade import Exportar_elemento_assoc
 from .exportar_cabo_eletrico import Exportar_cabo_eletrico
 from .exportar_construcao_linear import Exportar_construcao_linear
 from .exportar_designacao_local import Exportar_designacao_local
-from .exportar_mobiliario_urbano_sinal import Exportar_mob_urbano_sinal
 from .exportar_unidades_administrativas import ExportarUnidadesAdministrativas
 from .exportar_fronteira import ExportarFronteira
 from .exportar_agua_lentica import ExportarAguaLentica
@@ -46,6 +45,7 @@ from .exportar_conduta_de_agua import ExportarCondutaDeAgua
 from .exportar_elem_assoc_pgq import ExportarElemAssocPGQ
 from .exportar_elem_assoc_telecomunicacoes import ExportarElemAssocTelecomunicacoes
 from .exportar_oleoduto_gasoduto_subtancias_quimicas import ExportarOleodutoGasodutoSubtanciasQuimicas
+from .exportar_mob_urbano_sinal import ExportarMobUrbanoSinal
 
 class Provider(QgsProcessingProvider):
 
@@ -58,7 +58,7 @@ class Provider(QgsProcessingProvider):
         self.addAlgorithm(Exportar_cabo_eletrico())
         self.addAlgorithm(Exportar_construcao_linear())
         self.addAlgorithm(Exportar_designacao_local())
-        self.addAlgorithm(Exportar_mob_urbano_sinal())
+        self.addAlgorithm(ExportarMobUrbanoSinal())
         self.addAlgorithm(ExportarUnidadesAdministrativas())
         self.addAlgorithm(ExportarFronteira())
         self.addAlgorithm(ExportarAguaLentica())
