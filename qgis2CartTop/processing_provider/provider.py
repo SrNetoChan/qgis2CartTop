@@ -42,6 +42,11 @@ from .exportar_ponto_interesse import ExportarPontoInteresse
 from .exportar_sinal_geodesico import ExportarSinalGeodesico
 from .exportar_area_agricola_florestal_mato import ExportarAreaAgricolaFlorestalMato
 from .exportar_areas_artificializadas import ExportarAreasArtificializadas
+from .exportar_conduta_de_agua import ExportarCondutaDeAgua
+from .exportar_elem_assoc_pgq import ExportarElemAssocPGQ
+from .exportar_elem_assoc_telecomunicacoes import ExportarElemAssocTelecomunicacoes
+from .exportar_oleoduto_gasoduto_subtancias_quimicas import ExportarOleodutoGasodutoSubtanciasQuimicas
+
 class Provider(QgsProcessingProvider):
 
     def loadAlgorithms(self, *args, **kwargs):
@@ -88,6 +93,10 @@ class Provider(QgsProcessingProvider):
         self.addAlgorithm(ExportarSinalGeodesico())
         self.addAlgorithm(ExportarAreaAgricolaFlorestalMato())
         self.addAlgorithm(ExportarAreasArtificializadas())
+        self.addAlgorithm(ExportarCondutaDeAgua())
+        self.addAlgorithm(ExportarElemAssocPGQ())
+        self.addAlgorithm(ExportarElemAssocTelecomunicacoes())
+        self.addAlgorithm(ExportarOleodutoGasodutoSubtanciasQuimicas())
         # add additional algorithms here
         # self.addAlgorithm(MyOtherAlgorithm())
 

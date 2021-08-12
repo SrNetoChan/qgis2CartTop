@@ -4,69 +4,70 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingMultiStepFeedback,
                        QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterEnum,
+                       QgsProcessingParameterProviderConnection,
+                       QgsProcessingParameterString,
+                       QgsProcessingParameterNumber,
                        QgsProperty,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingUtils)
+                       QgsProcessingParameterBoolean)
+
 import processing
-from .utils import get_postgres_connections, get_lista_codigos
+from .utils import get_lista_codigos
 
 
-class Exportar_elemento_associado_de_agua(QgsProcessingAlgorithm):
+class ExportarElemAssocPGQ(QgsProcessingAlgorithm):
 
     # Constants used to refer to parameters and outputs. They will be
     # used when calling the algorithm from another algorithm, or when
     # calling from the QGIS console.
 
+    LIGACAO_RECART = 'LIGACAO_RECART'
     INPUT = 'INPUT'
-    VALOR_ELEMENTO_ASSOCIADO_AGUA = 'VALOR_ELEMENTO_ASSOCIADO_AGUA'
-    POSTGRES_CONNECTION = 'POSTGRES_CONNECTION'
-
+    VALOR_ELEMENTO_ASSOCIADO_PGQ = 'VALOR_ELEMENTO_ASSOCIADO_PGQ'
 
     def initAlgorithm(self, config=None):
-        self.postgres_connections_list = get_postgres_connections()
-
         self.addParameter(
-            QgsProcessingParameterEnum(
-                self.POSTGRES_CONNECTION,
-                self.tr('Ligação PostgreSQL'),
-                self.postgres_connections_list,
-                defaultValue = 0
-            )
-        )
-
-        self.addParameter(
-            QgsProcessingParameterFeatureSource(
-                self.INPUT,
-                self.tr('Input point or polygon layer (2D)'),
-                types=[QgsProcessing.TypeVectorPoint,QgsProcessing.TypeVectorPolygon],
+            QgsProcessingParameterProviderConnection(
+                self.LIGACAO_RECART,
+                'Ligação PostgreSQL',
+                'postgres',
                 defaultValue=None
             )
         )
 
-        self.veaa_keys, self.veaa_values = get_lista_codigos('valorElementoAssociadoAgua')
+        input_layer = self.addParameter(
+            QgsProcessingParameterFeatureSource(
+                self.INPUT,
+                self.tr(' Camada de ponto ou polígono de entrada'),
+                types=[QgsProcessing.TypeVectorPoint, QgsProcessing.TypeVectorPolygon],
+                defaultValue=None
+            )
+        )
 
+        self.veap_keys, self.veap_values = get_lista_codigos('valorElementoAssociadoPGQ')
         self.addParameter(
             QgsProcessingParameterEnum(
-                self.VALOR_ELEMENTO_ASSOCIADO_AGUA,
-                self.tr('valorElementoAssociadoAgua'),
-                self.veaa_keys,
+                self.VALOR_ELEMENTO_ASSOCIADO_PGQ,
+                self.tr('Valor Elemento Associado Pgq'),
+                self.veap_keys,
                 defaultValue=0,
                 optional=False,
             )
         )
 
+
+
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
         # overall progress through the model
-        feedback = QgsProcessingMultiStepFeedback(3, model_feedback)
+        feedback = QgsProcessingMultiStepFeedback(2, model_feedback)
         results = {}
         outputs = {}
 
         # Convert enumerator to actual value
-        valor_associado_agua = self.veaa_values[
+        valor_elemento_associado_pgq = self.veap_values[
             self.parameterAsEnum(
                 parameters,
-                self.VALOR_ELEMENTO_ASSOCIADO_AGUA,
+                self.VALOR_ELEMENTO_ASSOCIADO_PGQ,
                 context
                 )
             ]
@@ -79,10 +80,11 @@ class Exportar_elemento_associado_de_agua(QgsProcessingAlgorithm):
                 'name': 'inicio_objeto',
                 'precision': -1,
                 'type': 14
+   
             },{
-                'expression': str(valor_associado_agua),
+                'expression': valor_elemento_associado_pgq,
                 'length': 255,
-                'name': 'valor_elemento_associado_agua',
+                'name': 'valor_elemento_associado_pgq',
                 'precision': -1,
                 'type': 10
             }],
@@ -95,56 +97,25 @@ class Exportar_elemento_associado_de_agua(QgsProcessingAlgorithm):
         if feedback.isCanceled():
             return {}
 
-        # Sanitize Z and M values from 3D Layers
-        # Input table only accepts 2D
         alg_params = {
-            'DROP_M_VALUES': True,
-            'DROP_Z_VALUES': True,
-            'INPUT': outputs['RefactorFields']['OUTPUT'],
-            'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
-        }
-        outputs['DropMzValues'] = processing.run('native:dropmzvalues', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
-
-        feedback.setCurrentStep(2)
-        if feedback.isCanceled():
-            return {}
-
-        # Export to PostgreSQL (available connections)
-        idx = self.parameterAsEnum(
-            parameters,
-            self.POSTGRES_CONNECTION,
-            context
-            )
-
-        postgres_connection = self.postgres_connections_list[idx]
-
-        # Because the target layer is of the geometry type, one needs to make
-        # sure to use the correct option when importing into PostGIS
-        layer = QgsProcessingUtils.mapLayerFromString(outputs['RefactorFields']['OUTPUT'], context)
-        if layer.geometryType() == 0:
-            gtype = 3
-        elif layer.geometryType() == 2:
-            gtype = 5
-
-        alg_params = {
-            'ADDFIELDS': True,
+            'ADDFIELDS': False,
             'APPEND': True,
             'A_SRS': None,
             'CLIP': False,
-            'DATABASE': postgres_connection,
+            'DATABASE': parameters[self.LIGACAO_RECART],
             'DIM': 0,
             'GEOCOLUMN': 'geometria',
             'GT': '',
-            'GTYPE': gtype,
-            'INDEX': True,
-            'INPUT': outputs['DropMzValues']['OUTPUT'],
-            'LAUNDER': True,
+            'GTYPE': 0,
+            'INDEX': False,
+            'INPUT': outputs['RefactorFields']['OUTPUT'],
+            'LAUNDER': False,
             'OPTIONS': '',
             'OVERWRITE': False,
             'PK': '',
             'PRECISION': True,
             'PRIMARY_KEY': 'identificador',
-            'PROMOTETOMULTI': True,
+            'PROMOTETOMULTI': False,
             'SCHEMA': 'public',
             'SEGMENTIZE': '',
             'SHAPE_ENCODING': '',
@@ -152,7 +123,7 @@ class Exportar_elemento_associado_de_agua(QgsProcessingAlgorithm):
             'SKIPFAILURES': False,
             'SPAT': None,
             'S_SRS': None,
-            'TABLE': 'elem_assoc_agua',
+            'TABLE': 'elem_assoc_pgq',
             'T_SRS': None,
             'WHERE': ''
         }
@@ -160,10 +131,10 @@ class Exportar_elemento_associado_de_agua(QgsProcessingAlgorithm):
         return results
 
     def name(self):
-        return 'exportar_elemento_associado_de_agua'
+        return 'exportar_elem_assoc_pgq'
 
     def displayName(self):
-        return '04. Exportar elemento associado de agua'
+        return '06. Exportar Elemento associado de petróleo, gás e substâncias químicas'
 
     def group(self):
         return '08 - Infraestruturas e serviços'
@@ -172,7 +143,7 @@ class Exportar_elemento_associado_de_agua(QgsProcessingAlgorithm):
         return '08infraestruturas'
 
     def createInstance(self):
-        return Exportar_elemento_associado_de_agua()
+        return ExportarElemAssocPGQ()
 
     def tr(self, string):
         """
@@ -181,8 +152,8 @@ class Exportar_elemento_associado_de_agua(QgsProcessingAlgorithm):
         return QCoreApplication.translate('Processing', string)
 
     def shortHelpString(self):
-        return self.tr("Exporta elementos do tipo elemento associado de água para a base " \
+        return self.tr("Exporta elementos do tipo Elemento associado de petróleo, gás e substâncias químicas para a base " \
                        "de dados RECART usando uma ligação PostgreSQL/PostGIS " \
                        "já configurada.\n\n" \
-                       "A camada vectorial de input deve ser do tipo ponto ou polígono 2D."
+                       "A camada vectorial de input deve ser do tipo ponto ou polígono -."
         )
