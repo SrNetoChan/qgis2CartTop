@@ -35,6 +35,7 @@ from .exportar_infra_trans_rodov import ExportarInfraTransRodov
 from .exportar_no_trans_rodov import ExportarNoTransRodov
 from .exportar_seg_via_rodov import ExportarSegViaRodov
 from .exportar_via_rodov_limite import ExportarViaRodovLimite
+from .exportar_obra_arte import ExportarObraArte
 
 class Provider(QgsProcessingProvider):
 
@@ -75,6 +76,7 @@ class Provider(QgsProcessingProvider):
         self.addAlgorithm(ExportarNoTransRodov())
         self.addAlgorithm(ExportarSegViaRodov())
         self.addAlgorithm(ExportarViaRodovLimite())
+        self.addAlgorithm(ExportarObraArte())
         # add additional algorithms here
         # self.addAlgorithm(MyOtherAlgorithm())
 
