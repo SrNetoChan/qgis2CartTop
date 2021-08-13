@@ -6,9 +6,10 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterEnum,
                        QgsProperty,
                        QgsProcessingParameterBoolean,
-                       QgsProcessingUtils)
+                       QgsProcessingUtils,
+                       QgsProcessingParameterProviderConnection)
 import processing
-from .utils import get_postgres_connections, get_lista_codigos
+from .utils import get_lista_codigos
 
 
 class Exportar_elemento_associado_de_eletricidade(QgsProcessingAlgorithm):
@@ -17,20 +18,17 @@ class Exportar_elemento_associado_de_eletricidade(QgsProcessingAlgorithm):
     # used when calling the algorithm from another algorithm, or when
     # calling from the QGIS console.
 
+    LIGACAO_RECART = 'LIGACAO_RECART'
     INPUT = 'INPUT'
     VALOR_ELEMENTO_ASSOCIADO_ELECTRICIDADE = 'VALOR_ELEMENTO_ASSOCIADO_ELECTRICIDADE'
-    POSTGRES_CONNECTION = 'POSTGRES_CONNECTION'
-
 
     def initAlgorithm(self, config=None):
-        self.postgres_connections_list = get_postgres_connections()
-
         self.addParameter(
-            QgsProcessingParameterEnum(
-                self.POSTGRES_CONNECTION,
-                self.tr('Ligação PostgreSQL'),
-                self.postgres_connections_list,
-                defaultValue = 0
+            QgsProcessingParameterProviderConnection(
+                self.LIGACAO_RECART,
+                'Ligação PostgreSQL',
+                'postgres',
+                defaultValue=None
             )
         )
 
@@ -61,8 +59,6 @@ class Exportar_elemento_associado_de_eletricidade(QgsProcessingAlgorithm):
         feedback = QgsProcessingMultiStepFeedback(3, model_feedback)
         results = {}
         outputs = {}
-
-        valor_associado_eletricidade = list(self.valor_elemento_associado_eletricidade_dict.values())[enum]
 
         # Convert enumerator to actual value
         valor_associado_eletricidade = self.veae_values[
@@ -113,13 +109,6 @@ class Exportar_elemento_associado_de_eletricidade(QgsProcessingAlgorithm):
             return {}
 
         # Export to PostgreSQL (available connections)
-        idx = self.parameterAsEnum(
-            parameters,
-            self.POSTGRES_CONNECTION,
-            context
-            )
-
-        postgres_connection = self.postgres_connections_list[idx]
 
         # Because the target layer is of the geometry type, one needs to make
         # sure to use the correct option when importing into PostGIS
@@ -134,7 +123,7 @@ class Exportar_elemento_associado_de_eletricidade(QgsProcessingAlgorithm):
             'APPEND': True,
             'A_SRS': None,
             'CLIP': False,
-            'DATABASE': postgres_connection,
+            'DATABASE': parameters[self.LIGACAO_RECART],
             'DIM': 0,
             'GEOCOLUMN': 'geometria',
             'GT': '',

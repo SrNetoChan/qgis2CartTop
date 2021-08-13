@@ -6,9 +6,10 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterEnum,
                        QgsProperty,
                        QgsProcessingParameterBoolean,
-                       QgsProcessingUtils)
+                       QgsProcessingUtils,
+                       QgsProcessingParameterProviderConnection)
 import processing
-from .utils import get_postgres_connections, get_lista_codigos
+from .utils import get_lista_codigos
 
 
 class Exportar_cabo_eletrico(QgsProcessingAlgorithm):
@@ -17,21 +18,20 @@ class Exportar_cabo_eletrico(QgsProcessingAlgorithm):
     # used when calling the algorithm from another algorithm, or when
     # calling from the QGIS console.
 
+    LIGACAO_RECART = 'LIGACAO_RECART'
     INPUT = 'INPUT'
     VALOR_POSICAO_VERTICAL ='VALOR_POSICAO_VERTICAL'
     VALOR_DESIGNACAO_TENSAO = 'VALOR_DESIGNACAO_TENSAO'
-    POSTGRES_CONNECTION = 'POSTGRES_CONNECTION'
 
 
     def initAlgorithm(self, config=None):
-        self.postgres_connections_list = get_postgres_connections()
 
         self.addParameter(
-            QgsProcessingParameterEnum(
-                self.POSTGRES_CONNECTION,
-                self.tr('Ligação PostgreSQL'),
-                self.postgres_connections_list,
-                defaultValue=0
+            QgsProcessingParameterProviderConnection(
+                self.LIGACAO_RECART,
+                'Ligação PostgreSQL',
+                'postgres',
+                defaultValue=None
             )
         )
 
@@ -139,21 +139,13 @@ class Exportar_cabo_eletrico(QgsProcessingAlgorithm):
         if feedback.isCanceled():
             return {}
 
-        # Export to PostgreSQL (available connections)
-        idx = self.parameterAsEnum(
-            parameters,
-            self.POSTGRES_CONNECTION,
-            context
-            )
-
-        postgres_connection = self.postgres_connections_list[idx]
 
         alg_params = {
             'ADDFIELDS': True,
             'APPEND': True,
             'A_SRS': None,
             'CLIP': False,
-            'DATABASE': postgres_connection,
+            'DATABASE': parameters[self.LIGACAO_RECART],
             'DIM': 0,
             'GEOCOLUMN': 'geometria',
             'GT': '',
