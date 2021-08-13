@@ -4,6 +4,7 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingMultiStepFeedback,
                        QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterEnum,
+                       QgsProcessingParameterField,
                        QgsProperty,
                        QgsProcessingParameterBoolean,
                        QgsProcessingParameterProviderConnection)
@@ -20,6 +21,7 @@ class Exportar_designacao_local(QgsProcessingAlgorithm):
     LIGACAO_RECART = 'LIGACAO_RECART'
     INPUT = 'INPUT'
     VALOR_LOCAL_NOMEADO = 'VALOR_LOCAL_NOMEADO'
+    CAMPO_NOME = 'CAMPO_COM_NOME'
 
 
     def initAlgorithm(self, config=None):
@@ -53,6 +55,18 @@ class Exportar_designacao_local(QgsProcessingAlgorithm):
             )
         )
 
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.CAMPO_NOME,
+                self.tr(' Campo com Nome da designacao Local'),
+                type=QgsProcessingParameterField.String,
+                parentLayerParameterName=self.INPUT,
+                allowMultiple=False,
+                defaultValue='',
+                optional=False
+            )
+        )
+
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
         # overall progress through the model
@@ -69,6 +83,13 @@ class Exportar_designacao_local(QgsProcessingAlgorithm):
                 )
             ]
 
+       # Get the name of the selected fields
+        campo_nome = self.parameterAsString(
+            parameters,
+            self.CAMPO_NOME,
+            context
+        )
+
         # Refactor fields
         alg_params = {
             'FIELDS_MAPPING': [{
@@ -84,10 +105,10 @@ class Exportar_designacao_local(QgsProcessingAlgorithm):
                 'precision': -1,
                 'type': 10
             },{
-                'expression': 'nome',
+                'expression': f'\"{campo_nome}\"',
                 'length': 255,
                 'name': 'nome',
-                'precision': -1,
+                'precision': 0,
                 'type': 10
             }],
             'INPUT': parameters['INPUT'],
