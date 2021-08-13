@@ -60,7 +60,7 @@ class ExportarAreaTrabalho(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.NIVEL_DE_DETALHE,
-                self.tr('Nivel De Detalhe'),
+                self.tr('Nivel de Detalhe'),
                 options=self.nivel_de_detalhe_values,
                 defaultValue=0,
                 optional=False,
@@ -81,7 +81,7 @@ class ExportarAreaTrabalho(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterString(
                 self.NOME_DO_PRODUTOR,
-                self.tr('Nome Do Produtor'),
+                self.tr('Nome do Produtor'),
                 defaultValue='',
                 optional=False,
             )
@@ -91,7 +91,7 @@ class ExportarAreaTrabalho(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterString(
                 self.NOME_DO_PROPRIETARIO,
-                self.tr('Nome Do Proprietario'),
+                self.tr('Nome do Proprietário'),
                 defaultValue='',
                 optional=False,
             )

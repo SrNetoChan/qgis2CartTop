@@ -39,7 +39,7 @@ class ExportarAguaLentica(QgsProcessingAlgorithm):
         input_layer = self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.INPUT,
-                self.tr('Input line layer'),
+                self.tr('Camada de Linhas de Entrada'),
                 types=[QgsProcessing.TypeVectorPolygon],
                 defaultValue=None
             )

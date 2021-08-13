@@ -35,7 +35,7 @@ class Exportar_pontos_cotados(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.INPUT,
-                self.tr('Input point layer (3D)'),
+                self.tr('Camada de Pontos de Entrada (3D)'),
                 types=[QgsProcessing.TypeVectorPoint],
                 defaultValue=None
             )

@@ -39,7 +39,7 @@ class Exportar_construcao_linear(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.INPUT,
-                self.tr('Input line layer (2D)'),
+                self.tr('Camada de Linhas de Entrada (2D)'),
                 types=[QgsProcessing.TypeVectorLine],
                 defaultValue=None
             )

@@ -37,7 +37,7 @@ class ExportarFronteira(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.INPUT,
-                self.tr('Input line layer'),
+                self.tr('Camada de Linhas de Entrada'),
                 types=[QgsProcessing.TypeVectorLine],
                 defaultValue=None
             )

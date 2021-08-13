@@ -36,7 +36,7 @@ class Exportar_elemento_associado_de_agua(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.INPUT,
-                self.tr('Input point or polygon layer (2D)'),
+                self.tr('Camada de Pontos ou Polígonos de Entrada (2D)'),
                 types=[QgsProcessing.TypeVectorPoint,QgsProcessing.TypeVectorPolygon],
                 defaultValue=None
             )

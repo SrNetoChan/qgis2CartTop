@@ -35,7 +35,7 @@ class Exportar_designacao_local(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.INPUT,
-                self.tr('Input point layer (2D)'),
+                self.tr('Camada de Pontos de Entrada (2D)'),
                 types=[QgsProcessing.TypeVectorPoint],
                 defaultValue=None
             )

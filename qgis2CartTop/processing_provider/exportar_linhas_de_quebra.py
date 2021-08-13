@@ -36,7 +36,7 @@ class Exportar_linhas_de_quebra(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.INPUT,
-                self.tr('Input line layer (3D)'),
+                self.tr('Camada de Linhas de Entrada (3D)'),
                 types=[QgsProcessing.TypeVectorLine],
                 defaultValue=None
             )

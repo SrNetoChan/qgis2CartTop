@@ -35,7 +35,7 @@ class Exportar_elemento_associado_de_eletricidade(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.INPUT,
-                self.tr('Input point or polygon layer (2D)'),
+                self.tr('Camada de pontos ou polígonos de entrada (2D)'),
                 types=[QgsProcessing.TypeVectorPoint,QgsProcessing.TypeVectorPolygon],
                 defaultValue=None
             )
