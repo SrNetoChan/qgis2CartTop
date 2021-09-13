@@ -44,6 +44,7 @@ class ExportarAreaAgricolaFlorestalMato(QgsProcessingAlgorithm):
         )
 
         self.vaafm_keys, self.vaafm_values = get_lista_codigos('valorAreasAgricolasFlorestaisMatos')
+        
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.VALOR_AREAS_AGRICOLAS_FLORESTAIS_MATOS,
@@ -82,7 +83,7 @@ class ExportarAreaAgricolaFlorestalMato(QgsProcessingAlgorithm):
                 'type': 14
    
             },{
-                'expression': valor_areas_agricolas_florestais_matos,
+                'expression': f'\'{valor_areas_agricolas_florestais_matos}\'',
                 'length': 255,
                 'name': 'valor_areas_agricolas_florestais_matos',
                 'precision': -1,

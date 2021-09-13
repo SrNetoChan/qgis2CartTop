@@ -82,7 +82,7 @@ class ExportarElemAssocPGQ(QgsProcessingAlgorithm):
                 'type': 14
    
             },{
-                'expression': valor_elemento_associado_pgq,
+                'expression': f'\'{valor_elemento_associado_pgq}\'',
                 'length': 255,
                 'name': 'valor_elemento_associado_pgq',
                 'precision': -1,
