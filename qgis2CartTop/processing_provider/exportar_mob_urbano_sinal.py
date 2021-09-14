@@ -84,7 +84,7 @@ class ExportarMobUrbanoSinal(QgsProcessingAlgorithm):
             },{
                 'expression': valor_tipo_mob_urb_sinal,
                 'length': 255,
-                'name': 'valor_tipo_mob_urb_sinal',
+                'name': 'valor_tipo_de_mob_urbano_sinal',
                 'precision': -1,
                 'type': 10
             }],
