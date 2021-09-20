@@ -82,7 +82,7 @@ class ExportarAreaInfraTransFerrov(QgsProcessingAlgorithm):
             },{
                 'expression': f'\"{campo_com_infra_trans_ferrov_id}\"',
                 'length': 255,
-                'name': 'infra_trans_rodov_id',
+                'name': 'infra_trans_ferrov_id',
                 'precision': 0,
                 'type': 10
             }],
