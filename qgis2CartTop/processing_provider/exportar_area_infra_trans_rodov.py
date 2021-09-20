@@ -72,8 +72,6 @@ class ExportarAreaInfraTransRodov(QgsProcessingAlgorithm):
             context
         )
 
-        print(f'\"{campo_com_infra_trans_rodov_id}\"')
-
         # Refactor fields
         alg_params = {
             'FIELDS_MAPPING': [{

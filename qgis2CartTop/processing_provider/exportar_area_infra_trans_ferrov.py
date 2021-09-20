@@ -8,7 +8,8 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterString,
                        QgsProcessingParameterNumber,
                        QgsProperty,
-                       QgsProcessingParameterBoolean)
+                       QgsProcessingParameterBoolean,
+                       QgsProcessingParameterField)
 
 import processing
 from .utils import get_lista_codigos
@@ -22,6 +23,7 @@ class ExportarAreaInfraTransFerrov(QgsProcessingAlgorithm):
 
     LIGACAO_RECART = 'LIGACAO_RECART'
     INPUT = 'INPUT'
+    CAMPO_COM_INFRA_TRANS_FERROV_ID = 'CAMPO_COM_INFRA_TRANS_FERROV_ID'
 
     def initAlgorithm(self, config=None):
         self.addParameter(
@@ -42,6 +44,17 @@ class ExportarAreaInfraTransFerrov(QgsProcessingAlgorithm):
             )
         )
 
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.CAMPO_COM_INFRA_TRANS_FERROV_ID,
+                self.tr(' Campo com ID da Infraestrutura de Transporte Ferroviário'),
+                type=QgsProcessingParameterField.String,
+                parentLayerParameterName=self.INPUT,
+                allowMultiple=False,
+                defaultValue=''
+            )
+        )
+
 
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
@@ -50,6 +63,12 @@ class ExportarAreaInfraTransFerrov(QgsProcessingAlgorithm):
         results = {}
         outputs = {}
 
+        # Get the name of the selected fields
+        campo_com_infra_trans_ferrov_id = self.parameterAsString(
+            parameters,
+            self.CAMPO_COM_INFRA_TRANS_FERROV_ID,
+            context
+        )
 
         # Refactor fields
         alg_params = {
@@ -60,6 +79,12 @@ class ExportarAreaInfraTransFerrov(QgsProcessingAlgorithm):
                 'precision': -1,
                 'type': 14
 
+            },{
+                'expression': f'\"{campo_com_infra_trans_ferrov_id}\"',
+                'length': 255,
+                'name': 'infra_trans_rodov_id',
+                'precision': 0,
+                'type': 10
             }],
             'INPUT': parameters['INPUT'],
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
