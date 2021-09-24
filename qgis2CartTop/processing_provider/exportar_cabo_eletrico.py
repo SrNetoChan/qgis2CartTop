@@ -166,7 +166,7 @@ class Exportar_cabo_eletrico(QgsProcessingAlgorithm):
             'SKIPFAILURES': False,
             'SPAT': None,
             'S_SRS': None,
-            'TABLE': 'cabo_eletrico',
+            'TABLE': 'cabo_electrico',
             'T_SRS': None,
             'WHERE': ''
         }
