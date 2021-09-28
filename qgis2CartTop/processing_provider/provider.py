@@ -47,6 +47,7 @@ from .exportar_elem_assoc_telecomunicacoes import ExportarElemAssocTelecomunicac
 from .exportar_oleoduto_gasoduto_subtancias_quimicas import ExportarOleodutoGasodutoSubtanciasQuimicas
 from .exportar_mob_urbano_sinal import ExportarMobUrbanoSinal
 from .exportar_area_trabalho import ExportarAreaTrabalho
+from .criar_nos_rodoviarios import CriarNosRodoviarios
 
 class Provider(QgsProcessingProvider):
 
@@ -99,6 +100,7 @@ class Provider(QgsProcessingProvider):
         self.addAlgorithm(ExportarElemAssocTelecomunicacoes())
         self.addAlgorithm(ExportarOleodutoGasodutoSubtanciasQuimicas())
         self.addAlgorithm(ExportarAreaTrabalho())
+        self.addAlgorithm(CriarNosRodoviarios())
         # add additional algorithms here
         # self.addAlgorithm(MyOtherAlgorithm())
 

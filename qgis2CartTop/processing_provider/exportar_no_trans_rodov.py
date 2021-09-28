@@ -8,7 +8,8 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterString,
                        QgsProcessingParameterNumber,
                        QgsProperty,
-                       QgsProcessingParameterBoolean)
+                       QgsProcessingParameterBoolean,
+                       QgsProcessingParameterField)
 
 import processing
 from .utils import get_lista_codigos
@@ -23,6 +24,7 @@ class ExportarNoTransRodov(QgsProcessingAlgorithm):
     LIGACAO_RECART = 'LIGACAO_RECART'
     INPUT = 'INPUT'
     VALOR_TIPO_NO_TRANS_RODOV = 'VALOR_TIPO_NO_TRANS_RODOV'
+    CAMPO_COM_TIPO_NO_TRANS_RODOV = 'CAMPO_COM_TIPO_NO_TRANS_RODOV'
 
     def initAlgorithm(self, config=None):
         self.addParameter(
@@ -54,7 +56,17 @@ class ExportarNoTransRodov(QgsProcessingAlgorithm):
             )
         )
 
-
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.CAMPO_COM_TIPO_NO_TRANS_RODOV,
+                self.tr(' Campo com tipo de nó de Transporte Rodoviário'),
+                type=QgsProcessingParameterField.String,
+                parentLayerParameterName=self.INPUT,
+                allowMultiple=False,
+                defaultValue='',
+                optional=True,
+            )
+        )
 
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
@@ -72,6 +84,19 @@ class ExportarNoTransRodov(QgsProcessingAlgorithm):
                 )
             ]
 
+        expression = valor_tipo_no_trans_rodov
+        
+        # Get the name of the selected fields
+        campo_com_tipo_no_trans_rodov = self.parameterAsString(
+            parameters,
+            self.CAMPO_COM_TIPO_NO_TRANS_RODOV,
+            context
+        )
+
+        # If nivel de detalhe is set, automatically determine which value of Valor Tipo Curva to use
+        if campo_com_tipo_no_trans_rodov != '':
+            expression = f'\"{campo_com_tipo_no_trans_rodov}\"'
+
         # Refactor fields
         alg_params = {
             'FIELDS_MAPPING': [{
@@ -82,7 +107,7 @@ class ExportarNoTransRodov(QgsProcessingAlgorithm):
                 'type': 14
    
             },{
-                'expression': valor_tipo_no_trans_rodov,
+                'expression': expression,
                 'length': 255,
                 'name': 'valor_tipo_no_trans_rodov',
                 'precision': -1,
@@ -155,5 +180,8 @@ class ExportarNoTransRodov(QgsProcessingAlgorithm):
         return self.tr("Exporta elementos do tipo Nó de transporte rodoviário para a base " \
                        "de dados RECART usando uma ligação PostgreSQL/PostGIS " \
                        "já configurada.\n\n" \
-                       "A camada vectorial de input deve ser do tipo ponto 3D."
+                       "A camada vectorial de input deve ser do tipo ponto 3D.\n\n" \
+                       "Opcionalmente, é possível indicar um campo que contenha valores " \
+                       "do tipo de nó de transporte rodoviário, sobrepondo-se ao valor " \
+                       "escolhido na opção Valor Tipo No Trans Rodov."
         )
