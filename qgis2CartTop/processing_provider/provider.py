@@ -49,6 +49,7 @@ from .exportar_mob_urbano_sinal import ExportarMobUrbanoSinal
 from .exportar_area_trabalho import ExportarAreaTrabalho
 from .criar_nos_rodoviarios import CriarNosRodoviarios
 from .criar_nos_hidrograficos import CriarNosHidrograficos
+from .criar_nos_ferroviarios import CriarNosFerroviarios
 
 class Provider(QgsProcessingProvider):
 
@@ -103,6 +104,7 @@ class Provider(QgsProcessingProvider):
         self.addAlgorithm(ExportarAreaTrabalho())
         self.addAlgorithm(CriarNosRodoviarios())
         self.addAlgorithm(CriarNosHidrograficos())
+        self.addAlgorithm(CriarNosFerroviarios())
         # add additional algorithms here
         # self.addAlgorithm(MyOtherAlgorithm())
 
