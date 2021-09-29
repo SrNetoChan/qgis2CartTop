@@ -8,7 +8,8 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterString,
                        QgsProcessingParameterNumber,
                        QgsProperty,
-                       QgsProcessingParameterBoolean)
+                       QgsProcessingParameterBoolean,
+                       QgsProcessingParameterField)
 
 import processing
 from .utils import get_lista_codigos
@@ -23,6 +24,7 @@ class ExportarNoHidrografico(QgsProcessingAlgorithm):
     LIGACAO_RECART = 'LIGACAO_RECART'
     INPUT = 'INPUT'
     VALOR_TIPO_NO_HIDROGRAFICO = 'VALOR_TIPO_NO_HIDROGRAFICO'
+    CAMPO_COM_TIPO_NO_HIDROGRAFICO = 'CAMPO_COM_TIPO_NO_HIDROGRAFICO'
 
     def initAlgorithm(self, config=None):
         self.addParameter(
@@ -54,6 +56,18 @@ class ExportarNoHidrografico(QgsProcessingAlgorithm):
             )
         )
 
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.CAMPO_COM_TIPO_NO_HIDROGRAFICO,
+                self.tr(' Campo com tipo de nó hidrográfico'),
+                type=QgsProcessingParameterField.String,
+                parentLayerParameterName=self.INPUT,
+                allowMultiple=False,
+                defaultValue='',
+                optional=True,
+            )
+        )
+
 
 
     def processAlgorithm(self, parameters, context, model_feedback):
@@ -72,6 +86,19 @@ class ExportarNoHidrografico(QgsProcessingAlgorithm):
                 )
             ]
 
+        expression = valor_tipo_no_hidrografico
+        
+        # Get the name of the selected fields
+        CAMPO_COM_TIPO_NO_HIDROGRAFICO = self.parameterAsString(
+            parameters,
+            self.CAMPO_COM_TIPO_NO_HIDROGRAFICO,
+            context
+        )
+
+        # If nivel de detalhe is set, automatically determine which value of Valor Tipo Curva to use
+        if CAMPO_COM_TIPO_NO_HIDROGRAFICO != '':
+            expression = f'\"{CAMPO_COM_TIPO_NO_HIDROGRAFICO}\"'
+
         # Refactor fields
         alg_params = {
             'FIELDS_MAPPING': [{
@@ -82,7 +109,7 @@ class ExportarNoHidrografico(QgsProcessingAlgorithm):
                 'type': 14
    
             },{
-                'expression': valor_tipo_no_hidrografico,
+                'expression': expression,
                 'length': 255,
                 'name': 'valor_tipo_no_hidrografico',
                 'precision': -1,
@@ -155,5 +182,8 @@ class ExportarNoHidrografico(QgsProcessingAlgorithm):
         return self.tr("Exporta elementos do tipo No Hidrografico para a base " \
                        "de dados RECART usando uma ligação PostgreSQL/PostGIS " \
                        "já configurada.\n\n" \
-                       "A camada vectorial de input deve ser do tipo ponto 3D."
+                       "A camada vectorial de input deve ser do tipo ponto 3D." \
+                       "Opcionalmente, é possível indicar um campo que contenha valores " \
+                       "do tipo de nó de hidrográfico, sobrepondo-se ao valor " \
+                       "escolhido na opção Valor Tipo No Hidrografico."
         )
