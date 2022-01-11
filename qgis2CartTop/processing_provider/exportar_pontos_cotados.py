@@ -96,7 +96,7 @@ class Exportar_pontos_cotados(QgsProcessingAlgorithm):
         # Export to PostgreSQL (available connections)
 
         alg_params = {
-            'ADDFIELDS': True,
+            'ADDFIELDS': False,
             'APPEND': True,
             'A_SRS': None,
             'CLIP': False,

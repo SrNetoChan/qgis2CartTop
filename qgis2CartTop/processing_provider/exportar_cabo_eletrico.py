@@ -141,7 +141,7 @@ class Exportar_cabo_eletrico(QgsProcessingAlgorithm):
 
 
         alg_params = {
-            'ADDFIELDS': True,
+            'ADDFIELDS': False,
             'APPEND': True,
             'A_SRS': None,
             'CLIP': False,

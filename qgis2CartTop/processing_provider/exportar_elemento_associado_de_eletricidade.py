@@ -119,7 +119,7 @@ class Exportar_elemento_associado_de_eletricidade(QgsProcessingAlgorithm):
             gtype = 5
 
         alg_params = {
-            'ADDFIELDS': True,
+            'ADDFIELDS': False,
             'APPEND': True,
             'A_SRS': None,
             'CLIP': False,

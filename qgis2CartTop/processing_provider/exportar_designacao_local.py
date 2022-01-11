@@ -123,7 +123,7 @@ class Exportar_designacao_local(QgsProcessingAlgorithm):
         # Export to PostgreSQL (available connections)
 
         alg_params = {
-            'ADDFIELDS': True,
+            'ADDFIELDS': False,
             'APPEND': True,
             'A_SRS': None,
             'CLIP': False,

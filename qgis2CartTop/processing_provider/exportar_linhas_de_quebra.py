@@ -124,7 +124,7 @@ class Exportar_linhas_de_quebra(QgsProcessingAlgorithm):
         # Export to PostgreSQL (available connections)
 
         alg_params = {
-            'ADDFIELDS': True,
+            'ADDFIELDS': False,
             'APPEND': True,
             'A_SRS': None,
             'CLIP': False,

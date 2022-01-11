@@ -111,7 +111,7 @@ class ExportarFronteira(QgsProcessingAlgorithm):
             return {}
 
         alg_params = {
-            'ADDFIELDS': True,
+            'ADDFIELDS': False,
             'APPEND': True,
             'A_SRS': None,
             'CLIP': False,

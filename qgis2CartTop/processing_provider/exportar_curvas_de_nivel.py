@@ -167,7 +167,7 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
         # Export to PostgreSQL (available connections)
 
         alg_params = {
-            'ADDFIELDS': True,
+            'ADDFIELDS': False,
             'APPEND': True,
             'A_SRS': None,
             'CLIP': False,
