@@ -3,10 +3,8 @@
 Plugin QGIS de auxílio à exportação de dados cartográficos
 para uma base de dados PostgreSQL/PostGIS de acordo com o modelo
 de dados definido pelas **Normas e Especificações Técnicas para a
-Cartografia Vectoria e de Imagem** (CartTop / RECART) da autoria da
+Cartografia Vectoria e de Imagem** ([CartTop / RECART](https://github.com/dgterritorio/RECART)) da autoria da
 Direcção-Geral do Território.
-
-https://github.com/dgterritorio/RECART
 
 O trabalho foi desenvolvido pela NaturalGIS com co-financiamento da Inforgeo e a Artop.
 
