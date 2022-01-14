@@ -15,6 +15,7 @@
 from PyQt5.QtWidgets import QAction, QMessageBox
 from qgis.core import QgsApplication
 from .processing_provider.provider import Provider
+from .processing_provider_validacao.provider_validacao import Provider_validacao
 
 def classFactory(iface):
     return qgis2CartTop(iface)
@@ -27,9 +28,12 @@ class qgis2CartTop:
     def initProcessing(self):
         self.provider = Provider()
         QgsApplication.processingRegistry().addProvider(self.provider)
+        self.provider_validacao = Provider_validacao()
+        QgsApplication.processingRegistry().addProvider(self.provider_validacao)
 
     def initGui(self):
         self.initProcessing()
 
     def unload(self):
         QgsApplication.processingRegistry().removeProvider(self.provider)
+        QgsApplication.processingRegistry().removeProvider(self.provider_validacao)
