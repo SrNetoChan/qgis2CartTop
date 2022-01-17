@@ -6,7 +6,6 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterBoolean,
                        QgsProcessingParameterProviderConnection)
 import processing, os
-from .utils import get_lista_codigos
 
 
 class Consolidar_curvas_de_nivel(QgsProcessingAlgorithm):
