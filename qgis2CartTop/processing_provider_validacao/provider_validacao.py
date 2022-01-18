@@ -1,12 +1,14 @@
 from qgis.core import QgsProcessingProvider
 from .consolidar_curvas_de_nivel import Consolidar_curvas_de_nivel
 from .consolidar_linha_de_quebra import Consolidar_quebra_de_linha
+from .consolidar_fronteira_terra_agua import Consolidar_fronteira_terra_agua
 
 class Provider_validacao(QgsProcessingProvider):
 
     def loadAlgorithms(self, *args, **kwargs):
         self.addAlgorithm(Consolidar_curvas_de_nivel())
         self.addAlgorithm(Consolidar_quebra_de_linha())
+        self.addAlgorithm(Consolidar_fronteira_terra_agua())
         # add additional algorithms here
         # self.addAlgorithm(MyOtherAlgorithm())
 
