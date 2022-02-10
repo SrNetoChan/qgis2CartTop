@@ -1,4 +1,5 @@
 from qgis.core import QgsProcessingProvider
+from qgis2CartTop.processing_provider_validacao.consolidar_seg_via_rodov import Consolidar_seg_via_rodov
 from .consolidar_curvas_de_nivel import Consolidar_curvas_de_nivel
 from .consolidar_linha_de_quebra import Consolidar_quebra_de_linha
 from .consolidar_fronteira_terra_agua import Consolidar_fronteira_terra_agua
@@ -9,6 +10,7 @@ class Provider_validacao(QgsProcessingProvider):
         self.addAlgorithm(Consolidar_curvas_de_nivel())
         self.addAlgorithm(Consolidar_quebra_de_linha())
         self.addAlgorithm(Consolidar_fronteira_terra_agua())
+        self.addAlgorithm(Consolidar_seg_via_rodov())
         # add additional algorithms here
         # self.addAlgorithm(MyOtherAlgorithm())
 

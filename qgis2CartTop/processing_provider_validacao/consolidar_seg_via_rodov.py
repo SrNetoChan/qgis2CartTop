@@ -8,7 +8,7 @@ from qgis.core import (QgsProcessing,
 import processing, os
 
 
-class Consolidar_quebra_de_linha(QgsProcessingAlgorithm):
+class Consolidar_seg_via_rodov(QgsProcessingAlgorithm):
 
     # Constants used to refer to parameters and outputs. They will be
     # used when calling the algorithm from another algorithm, or when
@@ -30,7 +30,7 @@ class Consolidar_quebra_de_linha(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.SUBSTITUIR_BACKUP,
-                'Substituir backup existente'
+                'Substituir backup existente (CUIDADO!!)'
             )
         )
 
@@ -46,7 +46,7 @@ class Consolidar_quebra_de_linha(QgsProcessingAlgorithm):
         substituir_backup = parameters[self.SUBSTITUIR_BACKUP]
 
         script_path = os.path.dirname(os.path.realpath(__file__))
-        sql_path = os.path.join(script_path, 'consolidar_linha_de_quebra.sql')
+        sql_path = os.path.join(script_path, 'consolidar_seg_via_rodov.sql')
 
         with open(sql_path) as f:
             base_sql = f.read()
@@ -58,7 +58,9 @@ class Consolidar_quebra_de_linha(QgsProcessingAlgorithm):
             # PostgreSQL execute SQL
             alg_params = {
                 'DATABASE': ligacao_recart,
-                'SQL': 'DROP TABLE IF EXISTS backup.linha_de_quebra_bk;'
+                'SQL': ('DROP TABLE IF EXISTS backup.seg_via_rodov_bk;'
+                        'DROP TABLE IF EXISTS backup.lig_valor_tipo_circulacao_seg_via_rodov_bk;'
+                        'DROP TABLE IF EXISTS backup.lig_segviarodov_viarodov_bk;')
             }
             outputs['PostgresqlExecuteSql'] = processing.run('qgis:postgisexecutesql', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
 
@@ -77,19 +79,19 @@ class Consolidar_quebra_de_linha(QgsProcessingAlgorithm):
         return results
 
     def name(self):
-        return 'consolidar_quebra_de_linha'
+        return 'consolidar_seg_via_rodov'
 
     def displayName(self):
-        return 'Consolidar linhas de quebra'
+        return 'Consolidar Segmento de via rodoviária'
 
     def group(self):
-        return '01 - Altimetria'
+        return '05 - Transportes'
 
     def groupId(self):
-        return '01altimetria'
+        return '05transportes'
 
     def createInstance(self):
-        return Consolidar_quebra_de_linha()
+        return Consolidar_seg_via_rodov()
 
     def tr(self, string):
         """
@@ -99,6 +101,7 @@ class Consolidar_quebra_de_linha(QgsProcessingAlgorithm):
 
     def shortHelpString(self):
         return self.tr(
-            "Agrega todas as linestrings adjacentes (em Z, Y e Z) com atributos comuns\n\n"
-            "<b>ATENÇÃO: Altera directamente a tabela linha_de_quebra<\b>"
+            "<p>Agrega todas as linestrings adjacentes (em Z, Y e Z) com atributos comuns</p>"
+            "<p><b>ATENÇÃO:</b> Esta ferramenta altera directamente as tabelas seg_via_rodov, lig_valor_tipo_circulacao_seg_via_rodov e lig_segviarodov_viarodov sendo criado um backup no schema backups</p>"
+            "<p><b>CUIDADO!:</b> Se a opção Substituir backup existente for usada, não existe forma de recuperar os dados originais!</p>"
                        )
