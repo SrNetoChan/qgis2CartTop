@@ -18,6 +18,10 @@ CREATE TABLE backup.lig_segviarodov_viarodov_bk (like public.lig_segviarodov_via
 INSERT INTO backup.lig_segviarodov_viarodov_bk
 SELECT * FROM public.lig_segviarodov_viarodov;
 
+CREATE TABLE backup.lig_segviarodov_viarodovlimite_bk (like public.lig_segviarodov_viarodovlimite);
+INSERT INTO backup.lig_segviarodov_viarodovlimite_bk
+SELECT * FROM public.lig_segviarodov_viarodovlimite;
+
 BEGIN;
 
 
