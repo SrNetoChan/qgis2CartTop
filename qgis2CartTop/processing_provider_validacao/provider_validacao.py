@@ -7,6 +7,7 @@ from .consolidar_fronteira_terra_agua import Consolidar_fronteira_terra_agua
 from .consolidar_seg_via_rodov import Consolidar_seg_via_rodov
 from .consolidar_via_rodov_limite import Consolidar_via_rodov_limite
 from .consolidar_curso_agua_eixo import Consolidar_curso_agua_eixo
+from .homogenizar_z_aguas_lenticas import homogenizar_z_aguas_lenticas
 
 class Provider_validacao(QgsProcessingProvider):
 
@@ -17,6 +18,7 @@ class Provider_validacao(QgsProcessingProvider):
         self.addAlgorithm(Consolidar_seg_via_rodov())
         self.addAlgorithm(Consolidar_via_rodov_limite())
         self.addAlgorithm(Consolidar_curso_agua_eixo())
+        self.addAlgorithm(homogenizar_z_aguas_lenticas())
         # add additional algorithms here
         # self.addAlgorithm(MyOtherAlgorithm())
 
