@@ -97,7 +97,7 @@ class CriarNosHidrograficos(QgsProcessingAlgorithm):
 
         # Refactor fields
         alg_params = {
-            'FIELDS_MAPPING': [{'expression': 'CASE WHEN id_count = 1 THEN \n\t\'1\' -- inicio\nWHEN id_count = 2 THEN\n\'4\' --pseudo-no\nWHEN id_count > 2 THEN\n\'3\' -- juncao\nEND','length': 10,'name': 'valor_tipo_no_trans_rodov','precision': 0,'type': 10}],
+            'FIELDS_MAPPING': [{'expression': 'CASE WHEN id_count = 1 THEN \n\t\'1\' -- inicio\nWHEN id_count = 2 THEN\n\'4\' --pseudo-no\nWHEN id_count > 2 THEN\n\'3\' -- juncao\nEND','length': 10,'name': 'valor_tipo_no_hidrografico','precision': 0,'type': 10}],
             'INPUT': outputs['MultipartToSingleparts']['OUTPUT'],
             'OUTPUT': parameters['NosHidrograficos']
         }
