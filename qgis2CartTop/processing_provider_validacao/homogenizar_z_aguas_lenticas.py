@@ -103,4 +103,4 @@ class homogenizar_z_aguas_lenticas(QgsProcessingAlgorithm):
             Em cada elemento, o valor de Z usado representa a moda dos valores Z de todos os seus vertices originais.<\p>
             <p><b>ATENÇÃO: Altera directamente a tabela agua_lentica<\b><\p>
             <p><b>CUIDADO!:</b> Se a opção Substituir backup existente for usada, não existe forma de recuperar os dados originais!<\p>"""
-                       )git s
+                       )
