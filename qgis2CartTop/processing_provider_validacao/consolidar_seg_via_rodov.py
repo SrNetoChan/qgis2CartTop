@@ -60,7 +60,8 @@ class Consolidar_seg_via_rodov(QgsProcessingAlgorithm):
                 'DATABASE': ligacao_recart,
                 'SQL': ('DROP TABLE IF EXISTS backup.seg_via_rodov_bk;'
                         'DROP TABLE IF EXISTS backup.lig_valor_tipo_circulacao_seg_via_rodov_bk;'
-                        'DROP TABLE IF EXISTS backup.lig_segviarodov_viarodov_bk;')
+                        'DROP TABLE IF EXISTS backup.lig_segviarodov_viarodov_bk;'
+                        'DROP TABLE IF EXISTS backup.lig_segviarodov_viarodovlimite_bk;')
             }
             outputs['PostgresqlExecuteSql'] = processing.run('qgis:postgisexecutesql', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
 
