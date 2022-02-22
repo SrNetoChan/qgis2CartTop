@@ -27,7 +27,7 @@ BEGIN;
 
 /* Unir todas as linhas com atributos iguais, guardando em arrays as ligações a outras
    tabelas*/
-CREATE SCHEMA IF NOT EXISTS temp ;
+CREATE SCHEMA IF NOT EXISTS temp;
 CREATE TABLE temp.seg_via_rodov_temp (like public.seg_via_rodov INCLUDING DEFAULTS);
 
 ALTER TABLE temp.seg_via_rodov_temp 
@@ -60,7 +60,7 @@ WITH via_rodov_agg AS
  (SELECT seg_via_rodov_id , array_agg(DISTINCT valor_tipo_circulacao_id) AS valor_tipo_circulacao_agg
  FROM public.lig_valor_tipo_circulacao_seg_via_rodov
  GROUP BY seg_via_rodov_id)
- , multilines AS (
+, multilines AS (
 SELECT
 	gestao,
 	largura_via_rodov,
@@ -128,10 +128,12 @@ DROP TABLE IF EXISTS temp.cutting_temp;
 
 CREATE TABLE temp.cutting_temp as
 	SELECT 
-		(st_dump(st_collect(st_endpoint(geometria),st_startpoint(geometria)))).geom AS geometria 
+		(st_dump(st_collect(st_endpoint(geometria),st_startpoint(geometria)))).geom AS geometria,
+		valor_posicao_vertical_transportes
 	FROM temp.seg_via_rodov_temp
 	UNION ALL
-	SELECT (st_dump(st_intersection(svrt1.geometria, svrt2.geometria))).geom AS geometria
+	SELECT (st_dump(st_intersection(svrt1.geometria, svrt2.geometria))).geom AS geometria,
+	svrt1.valor_posicao_vertical_transportes
 	FROM temp.seg_via_rodov_temp AS svrt1
 	JOIN temp.seg_via_rodov_temp AS svrt2
 	ON (svrt1.identificador > svrt2.identificador) AND st_crosses(svrt1.geometria,svrt2.geometria) AND svrt1.valor_posicao_vertical_transportes = svrt2.valor_posicao_vertical_transportes;
@@ -165,6 +167,7 @@ WITH intersection_points AS (
 SELECT identificador, st_collect(ct.geometria) AS geometria
 FROM temp.seg_via_rodov_temp svrt 
 	JOIN temp.cutting_temp ct ON st_intersects(svrt.geometria, ct.geometria)
+		AND ct.valor_posicao_vertical_transportes = svrt.valor_posicao_vertical_transportes
 GROUP BY identificador 
 )
 SELECT
