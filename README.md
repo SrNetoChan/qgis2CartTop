@@ -6,7 +6,7 @@ de dados definido pelas **Normas e Especificações Técnicas para a
 Cartografia Vectoria e de Imagem** ([CartTop / RECART](https://github.com/dgterritorio/RECART)) da autoria da
 Direcção-Geral do Território.
 
-O trabalho foi desenvolvido pela NaturalGIS com co-financiamento da Inforgeo e a Artop.
+O trabalho foi desenvolvido pela NaturalGIS com co-financiamento da Inforgeo, Artop e Geoglobal.
 
 ![image](https://user-images.githubusercontent.com/3607161/148868114-1dd07d95-eb57-4a6c-a5a2-64fbdb8b2f94.png)
 
@@ -23,7 +23,7 @@ O trabalho foi desenvolvido pela NaturalGIS com co-financiamento da Inforgeo e a
 
 ## Instruções
 
-Todas as ferramentas criadas estão disponiveis através do painel de processamento (Ctrl+alt+t) no grupo **QGIS to CartTop**.
+Todas as ferramentas criadas estão disponiveis através do painel de processamento (Ctrl+alt+t) nos grupos **QGIS to CartTop**.
 
 Enquanto ferramentas de processamento todas as ferramenta podem ser corridas em batch mode (processar vários ficheiro ao mesmo tempo). Também podem ser usadas no modelador gráfico, permitindo modelos ETL (Extract Transform Load) complexos.
 
