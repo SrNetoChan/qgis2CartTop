@@ -103,6 +103,8 @@ class CriarNosFerroviarios(QgsProcessingAlgorithm):
         }
         outputs['RefactorFields'] = processing.run('native:refactorfields', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
         results['NosTransporteFerroviario'] = outputs['RefactorFields']['OUTPUT']
+
+        context.layerToLoadOnCompletionDetails(results['NosTransporteFerroviario']).name = "Nós Ferroviários"
         return results
 
     def name(self):

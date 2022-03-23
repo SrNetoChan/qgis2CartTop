@@ -12,24 +12,41 @@ class CriarNosHidrograficos(QgsProcessingAlgorithm):
     def initAlgorithm(self, config=None):
         self.addParameter(QgsProcessingParameterVectorLayer('readetrabalho', 'Área de trabalho', types=[QgsProcessing.TypeVectorPolygon], defaultValue=None))
         self.addParameter(QgsProcessingParameterVectorLayer('cursoaguaeixo', 'Curso de água - eixo', types=[QgsProcessing.TypeVectorLine], defaultValue=None))
-        self.addParameter(QgsProcessingParameterFeatureSink('NosHidrograficos', 'Nós hidrográficos', type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, supportsAppend=True, defaultValue=None))
+        self.addParameter(QgsProcessingParameterVectorLayer('barreira', 'Barreira', types=[QgsProcessing.TypeVectorLine], defaultValue=None))
+        self.addParameter(QgsProcessingParameterVectorLayer('zonahumida', 'Zona húmida', defaultValue=None))
+        self.addParameter(QgsProcessingParameterVectorLayer('quedadeagua', 'Queda de água', defaultValue=None))
+        self.addParameter(QgsProcessingParameterFeatureSink('noshidrograficos', 'Nós hidrográficos', type=QgsProcessing.TypeVectorAnyGeometry, createByDefault=True, supportsAppend=True, defaultValue=None))
 
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
         # overall progress through the model
-        feedback = QgsProcessingMultiStepFeedback(7, model_feedback)
+        feedback = QgsProcessingMultiStepFeedback(9, model_feedback)
         results = {}
         outputs = {}
+
+        alg_params = {
+            'EXPRESSION': 'CASE WHEN\nz(start_point($geometry)) <= z(end_point($geometry)) THEN\nreverse($geometry)\nELSE\n$geometry\nEND',
+            'INPUT': parameters['cursoaguaeixo'],
+            'OUTPUT_GEOMETRY': 1,
+            'WITH_M': False,
+            'WITH_Z': True,
+            'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
+        }
+        outputs['GeometryByExpression'] = processing.run('native:geometrybyexpression', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+
+        feedback.setCurrentStep(1)
+        if feedback.isCanceled():
+            return {}
 
         # Refactor fields
         alg_params = {
             'FIELDS_MAPPING': [{'expression': '$id','length': 0,'name': 'id','precision': 0,'type': 4}],
-            'INPUT': parameters['cursoaguaeixo'],
+            'INPUT': outputs['GeometryByExpression']['OUTPUT'],
             'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
         }
         outputs['RefactorFields'] = processing.run('native:refactorfields', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
 
-        feedback.setCurrentStep(1)
+        feedback.setCurrentStep(2)
         if feedback.isCanceled():
             return {}
 
@@ -41,7 +58,7 @@ class CriarNosHidrograficos(QgsProcessingAlgorithm):
         }
         outputs['ExtrairVrticesEspecficos'] = processing.run('native:extractspecificvertices', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
 
-        feedback.setCurrentStep(2)
+        feedback.setCurrentStep(3)
         if feedback.isCanceled():
             return {}
 
@@ -52,7 +69,7 @@ class CriarNosHidrograficos(QgsProcessingAlgorithm):
         }
         outputs['EliminarGeometriasDuplicadas'] = processing.run('qgis:deleteduplicategeometries', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
 
-        feedback.setCurrentStep(3)
+        feedback.setCurrentStep(4)
         if feedback.isCanceled():
             return {}
 
@@ -68,7 +85,7 @@ class CriarNosHidrograficos(QgsProcessingAlgorithm):
         }
         outputs['UnirAtributosPelaLocalizaoSumrio'] = processing.run('qgis:joinbylocationsummary', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
 
-        feedback.setCurrentStep(4)
+        feedback.setCurrentStep(5)
         if feedback.isCanceled():
             return {}
 
@@ -80,7 +97,7 @@ class CriarNosHidrograficos(QgsProcessingAlgorithm):
         }
         outputs['Clip'] = processing.run('native:clip', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
 
-        feedback.setCurrentStep(5)
+        feedback.setCurrentStep(6)
         if feedback.isCanceled():
             return {}
 
@@ -91,18 +108,88 @@ class CriarNosHidrograficos(QgsProcessingAlgorithm):
         }
         outputs['MultipartToSingleparts'] = processing.run('native:multiparttosingleparts', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
 
-        feedback.setCurrentStep(6)
+        feedback.setCurrentStep(7)
         if feedback.isCanceled():
             return {}
 
-        # Refactor fields
+        # Join attributes by location barreira
         alg_params = {
-            'FIELDS_MAPPING': [{'expression': 'CASE WHEN id_count = 1 THEN \n\t\'1\' -- inicio\nWHEN id_count = 2 THEN\n\'4\' --pseudo-no\nWHEN id_count > 2 THEN\n\'3\' -- juncao\nEND','length': 10,'name': 'valor_tipo_no_hidrografico','precision': 0,'type': 10}],
+            'DISCARD_NONMATCHING': False,
             'INPUT': outputs['MultipartToSingleparts']['OUTPUT'],
-            'OUTPUT': parameters['NosHidrograficos']
+            'JOIN': parameters['barreira'],
+            'JOIN_FIELDS': ['identificador'],
+            'METHOD': 1,
+            'PREDICATE': [0,3],
+            'PREFIX': 'barreira_',
+            'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
+        }
+        outputs['JoinAttributesByLocationBarreira'] = processing.run('native:joinattributesbylocation', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+
+        feedback.setCurrentStep(8)
+        if feedback.isCanceled():
+            return {}
+
+        # Join attributes by location queda de agua
+        alg_params = {
+            'DISCARD_NONMATCHING': False,
+            'INPUT': outputs['JoinAttributesByLocationBarreira']['OUTPUT'],
+            'JOIN': parameters['quedadeagua'],
+            'JOIN_FIELDS': ['identificador'],
+            'METHOD': 1,
+            'PREDICATE': [0,3],
+            'PREFIX': 'queda_de_agua_',
+            'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
+        }
+        outputs['JoinAttributesByLocationQuedaDeAgua'] = processing.run('native:joinattributesbylocation', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+
+        feedback.setCurrentStep(9)
+        if feedback.isCanceled():
+            return {}
+
+        # Join attributes by location zona humida
+        alg_params = {
+            'DISCARD_NONMATCHING': False,
+            'INPUT': outputs['JoinAttributesByLocationQuedaDeAgua']['OUTPUT'],
+            'JOIN': parameters['zonahumida'],
+            'JOIN_FIELDS': ['identificador'],
+            'METHOD': 0,
+            'PREDICATE': [0,3],
+            'PREFIX': 'zona_humida_',
+            'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
+        }
+        outputs['JoinAttributesByLocationZonaHumida'] = processing.run('native:joinattributesbylocation', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+
+        # Refactor fields
+
+        expression = """
+        CASE WHEN id_count = 1 THEN
+			CASE WHEN "vertex_pos" = 0 THEN
+				'1' -- inicio
+			ELSE
+				'2' -- fim
+			END
+        WHEN id_count = 2 THEN
+			CASE WHEN  "barreira_identificador" is not NULL THEN
+				'6' -- regulacao de fluxo
+			WHEN  "queda_de_agua_identificador" is not NULL  or  "zona_humida_identificador" is not NULL THEN
+				'5' -- variacao de fluxo
+			ELSE
+				'4' -- pseudo-no
+			END
+        WHEN id_count > 2 THEN
+        '3' -- juncao
+        END
+        """
+        alg_params = {
+            'FIELDS_MAPPING': [{'expression': expression ,'length': 10,'name': 'valor_tipo_no_hidrografico','precision': 0,'type': 10}],
+            'INPUT': outputs['JoinAttributesByLocationZonaHumida']['OUTPUT'],
+            'OUTPUT': parameters['noshidrograficos']
         }
         outputs['RefactorFields'] = processing.run('native:refactorfields', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
-        results['NosHidrograficos'] = outputs['RefactorFields']['OUTPUT']
+        results['noshidrograficos'] = outputs['RefactorFields']['OUTPUT']
+
+        context.layerToLoadOnCompletionDetails(results['noshidrograficos']).name = "Nós hidrográficos"
+
         return results
 
     def name(self):
@@ -127,10 +214,7 @@ class CriarNosHidrograficos(QgsProcessingAlgorithm):
         return QCoreApplication.translate('Processing', string)
 
     def shortHelpString(self):
-        return self.tr("Cria camada de nós hidrográficos com base " \
-                        "numa camada de Curso de água - eixos. \n\n Usando o número de " \
-                        "ligações que o nó estabelece, tenta adivinhar o tipo" \
-                        "de nó (2 ou mais ligações: junção; 1 ligação: pseudo-no " \
-                        "; nenhuma ligação: Inicio). \n\n" \
-                        "Nós fora da área de trabalho são eliminados."
+        return self.tr(
+            """Cria camada de nós hidrográficos com base numa camada de Curso de água - eixos. 
+            Usando o número de ligações que o nó estabelece e sobreposição com outras camadas tenta classificar o tipo" de nó."""
         )
