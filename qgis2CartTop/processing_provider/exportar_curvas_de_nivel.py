@@ -115,9 +115,13 @@ class Exportar_curvas_de_nivel(QgsProcessingAlgorithm):
         
         # If nivel de detalhe is set, automatically determine which value of Valor Tipo Curva to use
         if parameters[self.NIVEL_DE_DETALHE] != 0:
-            vtc_exp = f"CASE WHEN z_majority % {parameters[self.NIVEL_DE_DETALHE] * 5} = 0 THEN '1'"  \
-                             f"WHEN z_majority % {parameters[self.NIVEL_DE_DETALHE]} = 0 THEN '2'" \
-                             f"ELSE '3' END"
+            nivel_detalhe = list(self.ndd_dict.keys())[parameters[self.NIVEL_DE_DETALHE]]
+            equidistancia = self.ndd_dict[nivel_detalhe]
+            print(equidistancia)
+            vtc_exp = f"""CASE WHEN z_majority % ({equidistancia} * 5) = 0 THEN '1'
+                          WHEN z_majority % {equidistancia} = 0 THEN '2'
+                          ELSE '3' END
+                       """
 
         # Refactor fields
         alg_params = {
