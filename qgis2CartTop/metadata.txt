@@ -16,7 +16,7 @@ about=(EN) QGIS Plugin to help import data into a PostgreSQL/PostGIS database
       (CartTop / ReCart) da Direcção-Geral do Território (Portugal). Contém
       também ferramentas para uma edição mais eficiente e melhoria da
       consistência dos dados.
-version=0.3
+version=0.3.1
 qgisMinimumVersion=3.0
 author=Alexandre Neto (NaturalGIS) co-funded by (Inforgeo, ArTop, Geoglobal, Geolayer)
 email=alexandre.neto@naturalgis.pt
