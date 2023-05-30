@@ -1,15 +1,19 @@
 [general]
-name=qgis2carttop
-description=QGIS plugin containing tools for easy export data into a CartTopV1/RECART database.
-about=QGIS Plugin to help exporting data into a PostgreSQL/PostGIS database
+name=qgis2carttop (community)
+description=QGIS plugin containing tools for data importation, validation 
+            and correction in a CartTop2/RECART database.
+about=QGIS Plugin to help import data into a PostgreSQL/PostGIS database
       following the data model defined by "Normas e Especificações Técnicas
       para a Cartografia Vectorial e de Imagem" (CartTop / ReCart) from
-      Direcção-Geral do Território (Portugal).
+      Direcção-Geral do Território (Portugal). Also contains tools for eficient 
+      editing and improve data consistency.
 version=0.3
 qgisMinimumVersion=3.0
-author=Alexandre Neto (NaturalGIS) co-funded by (Inforgeo, ArTop)
+author=Alexandre Neto (NaturalGIS) co-funded by (Inforgeo, ArTop, Geoglobal, Geolayer)
 email=alexandre.neto@naturalgis.pt
 repository=https://github.com/SrNetoChan/qgis2CartTop
+tracker=https://github.com/SrNetoChan/qgis2CartTop/issues
+homepage=https://naturalgis.pt/qgis2carttop
 experimental=True
 hasProcessingProvider=yes
-tags=carttop, PostgreSQL, PostGIS, ReCart, Processing
+tags=carttop, PostgreSQL, PostGIS, RECART, Processing
