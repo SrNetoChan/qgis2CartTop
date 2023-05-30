@@ -1,12 +1,21 @@
 [general]
-name=qgis2carttop (community)
-description=QGIS plugin containing tools for data importation, validation 
+name=QGIS2CartTop (sponsors)
+description=(EN) QGIS plugin containing tools for data importation, validation 
             and correction in a CartTop2/RECART database.
-about=QGIS Plugin to help import data into a PostgreSQL/PostGIS database
+            (PT) Plugin QGIS com ferramentas para importação, validação e correcção
+            de dados numa base de dados cartTop2/RECART
+about=(EN) QGIS Plugin to help import data into a PostgreSQL/PostGIS database
       following the data model defined by "Normas e Especificações Técnicas
       para a Cartografia Vectorial e de Imagem" (CartTop / ReCart) from
       Direcção-Geral do Território (Portugal). Also contains tools for eficient 
       editing and improve data consistency.
+
+      (PT) Plugin QGIS para ajudar na importação de dados numa base de dados
+      PostgreSQL/PostGIS segundo o modelo de dados definido pelas "Normas e
+      Especificações Técnicas para a Cartografia Vectorial e de Imagem" 
+      (CartTop / ReCart) da Direcção-Geral do Território (Portugal). Contém
+      também ferramentas para uma edição mais eficiente e melhoria da
+      consistência dos dados.
 version=0.3
 qgisMinimumVersion=3.0
 author=Alexandre Neto (NaturalGIS) co-funded by (Inforgeo, ArTop, Geoglobal, Geolayer)
