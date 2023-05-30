@@ -22,9 +22,6 @@ CREATE TABLE backup.lig_segviarodov_viarodovlimite_bk (like public.lig_segviarod
 INSERT INTO backup.lig_segviarodov_viarodovlimite_bk
 SELECT * FROM public.lig_segviarodov_viarodovlimite;
 
-BEGIN;
-
-
 /* Unir todas as linhas com atributos iguais, guardando em arrays as ligações a outras
    tabelas*/
 CREATE SCHEMA IF NOT EXISTS temp;
@@ -242,5 +239,3 @@ SELECT identificador AS seg_via_rodov_id, UNNEST(valor_tipo_circulacao_agg)  AS 
 FROM temp.seg_via_rodov_cortados;
 
 DROP SCHEMA IF EXISTS temp CASCADE;
-
-END;
