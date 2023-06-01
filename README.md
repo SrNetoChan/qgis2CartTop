@@ -85,7 +85,7 @@ Actualmente a versão **Sponsors** contém as seguintes funcionalidades extras:
 * **Criar relação n:1 nos elementos seleccionados** - Ferramenta que permite,
   após selecção de vários elementos de uma camada, estabelecer uma relação com elementos de outra tabela de uma só vez. Por exemplo, seleccionar vários segmentos de via rodoviária e adicionar-lhe uma via rodoviária. Ou seleccionar vários edifícios e atribuir-lhe um novo valor de utilização actual.
 
-  ![image](images/Peek 2023-06-01 16-12.mp4)
+  ![image](images/relation_replicator.gif)
 
 ## Instalação
 
